@@ -8,7 +8,7 @@ class Person(models.Model):
 	personal_id = models.AutoField(primary_key = True)
 	position = models.CharField(max_length = 200)
 	task_ids = models.CharField(validators=[validate_comma_separated_integer_list],max_length=200, default="")
-	#subordinates_id = models.ListIntegerField()
+	subordinate_ids =  models.CharField(validators=[validate_comma_separated_integer_list],max_length=200, default="")
 
 	def __str__(self):
 		return self.first_name + " " + self.surname_name + " (" + self.position + ")"
