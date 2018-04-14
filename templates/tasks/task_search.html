@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Tasks search</title>
+    </head>
+    <body>
+        <div id="searched tasks">
+              <form method="get">
+                {{ filter.form.as_p }}
+                <button type="submit">Search</button>
+              </form>
+              <ul>
+              {% for task in filter.qs %}
+                <li>{{ task.task_name}} - {{ task.task_description}} - {{task.created_date}}</li>
+              {% endfor %}
+              </ul>
+          </div>
+    </body>
+</html>
