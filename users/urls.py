@@ -5,5 +5,6 @@ urlpatterns = [
 	url (r'', include('django.contrib.auth.urls')),
 	url (r'^list', views.display_users),
 	url (r'^list/', views.display_users),
+	url (r'^logout/', views.logout),
 	url(r'', views.index),
 ]
