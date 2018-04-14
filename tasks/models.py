@@ -25,3 +25,6 @@ class Task(models.Model):
 
     def __str__(self):
         return self.task_description
+
+    def get_absolute_url(self):
+        return "/tasks/"
