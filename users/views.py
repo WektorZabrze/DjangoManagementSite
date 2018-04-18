@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from users.models import Person
 from django.template import Context, loader
+from django.contrib.auth.views import login, logout
 
 def display_users(request):
 	list_of_users = Person.objects.all()
@@ -44,5 +45,11 @@ def default_view():
 def whatever():
 	return HttpResponse("<html><body> You are logged in!</html><body>")
 
-def logout(request):
-	logout(request)
+def logout_user(request):
+	return logout(request)
+
+def login_user(request):
+	if not request.user.is_authenticated:
+		return login(request)
+	else:
+		return index(request)
