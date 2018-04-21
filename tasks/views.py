@@ -33,7 +33,7 @@ def task_add(request):
             task.save()
             return redirect('tasks_list')
     else:
-        form = TaskForm()
+        form = TaskForm(request = request)
     return render(request, 'tasks/task_form.html', {'form': form})
 
 
