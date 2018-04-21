@@ -50,3 +50,9 @@ def task_edit(request, pk):
     else:
         form = TaskForm(instance=task)
     return render(request, 'tasks/task_edit.html', {'form': form})
+
+
+@login_required
+def user_tasks(request):
+    tasks_table = Task.objects.filter(assigned_employee=request.user)
+    return render(request, 'tasks/user_tasks.html', locals())

@@ -5,6 +5,7 @@ from django.template import Context, loader
 from django.contrib.auth.views import login, logout
 from django.contrib.auth.decorators import login_required
 from tasks.models import Task
+from .forms import PersonForm
 
 
 def index(request):
@@ -20,6 +21,14 @@ def login_user(request):
 	else:
 		return index(request)
 
-def user_tasks(request):
-	tasks_table = Task.objects.filter(assigned_employee=request.user)
-	return render(request, 'user_views/user_tasks.html', locals())
+@login_required
+def recruit(request):
+    if request.method == "POST":
+        form = PersonForm(request.POST)
+        if form.is_valid():
+            task = form.save()
+            task.save()
+            return redirect('/')
+    else:
+        form = PersonForm()
+    return render(request, 'user_views/recruit.html', {'form': form})
