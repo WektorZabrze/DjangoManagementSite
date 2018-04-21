@@ -1,0 +1,12 @@
+{% load render_table from django_tables2 %}
+<html>
+    <head>
+        <title>Tasks list</title>
+    </head>
+    <body>
+        <h1>Whatever</h1>
+        <div id="task list">
+            {% render_table tasks_table %}
+        </div>
+    </body>
+</html>

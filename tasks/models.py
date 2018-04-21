@@ -11,7 +11,7 @@ class Task(models.Model):
 		('MED', 'Medium'),
 		('HIG', 'High'),
 		('CRI', 'Critical'),
-		), default = 'WOR',
+		), default = 'LOW',
 	)
 
     assigned_employee = models.ForeignKey(Person, on_delete=models.CASCADE)

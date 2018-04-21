@@ -6,5 +6,6 @@ urlpatterns = [
 	url (r'^list', views.display_users),
 	url (r'^list/', views.display_users),
 	url (r'^logout/', views.logout_user),
+	url (r'^user_tasks/', views.user_tasks),
 	url(r'', views.index),
 ]
