@@ -12,7 +12,7 @@
 		{% elif request.user.position %}
 			{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
 				<div style = "float: left; margin-right:20px"><a href='/recruit/'>Recruit</a></div>
-				<div style = "float: left; margin-right:20px">Assign Task</div>
+				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'>Assign Task</a></div>
 				<div style = "float: left; margin-right:20px">Change position </div>
 			{% elif requst.user.position == 'SUP' %}
 				<div style = "float: left; margin-right:20px"> Assign Task</div>
