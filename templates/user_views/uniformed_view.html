@@ -7,7 +7,7 @@
 <body>
 		{% if not request.user.is_authenticated %}
 			<h1>
-				<a href = http://localhost:8000/login/> Login here </a>
+				<a href = /login/> Login here </a>
 			</h1>
 		{% elif request.user.position %}
 			{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
@@ -18,10 +18,10 @@
 				<div style = "float: left; margin-right:20px"> Assign Task</div>
 			{% endif %}
 			<div style = "float: left; margin-right:20px">Check tasks</div>
-			<a href="http://localhost:8000/logout/"><div style = "float: left"> Logout</div></a>
+			<a href="/logout/"><div style = "float: left"> Logout</div></a>
 		{% elif request.user.position %}
 			You are logged in!
 		{% else %}
-			<a href = http://localhost:8000/login/> Login here </a>
+			<a href = /login/> Login here </a>
 		{% endif %}
 </body>

@@ -3,17 +3,13 @@ from django.http import HttpResponse
 from users.models import Person
 from django.template import Context, loader
 from django.contrib.auth.views import login, logout
+from django.contrib.auth.decorators import login_required
 
-def display_users(request):
-	list_of_users = Person.objects.all()
-	printed = "<br>".join([str(i) for i in list_of_users])
-	html = "<html><body>List of users:<br> {}.</body></html>".format(printed)
-	return HttpResponse(html)
 
 def index(request):
 	return render(request, 'user_views/uniformed_view.html')
 
-
+@login_required
 def logout_user(request):
 	return logout(request)
 
