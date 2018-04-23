@@ -1,10 +1,11 @@
 language: python
 
 python:
-  - 3.5
-
-env:
-  - DJANGO=2.0.4
+  - "3.5.2"
+  
+install:
+  - pip3 install -r requirements.txt
 
 script:
-  - python3 ./manage.py test
+  - python3 manage.py migrate
+  - python3 manage.py test
