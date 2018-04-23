@@ -1,0 +1,10 @@
+language: python
+
+python:
+  - 3.5
+
+env:
+  - DJANGO=2.0.4
+
+script:
+  - python3 ./manage.py test
