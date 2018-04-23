@@ -1,0 +1,66 @@
+{% extends 'tasks/chart/base.html' %}
+
+<script>
+
+    {% block jquery %}
+        var endpoint = 'tasks/api/chart/data/'
+        var defaultData = []
+        $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function (data) {
+                defaultData = data.tasks_data
+                setChart()
+            },
+            error: function (error_data) {
+                console.log("error")
+                console.log(error_data)
+            }
+        })
+
+        function setChart() {
+            var ctx = document.getElementById("tasks_chart");
+
+            var task_chart = new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: defaultData
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: false
+                    }, scales: {
+                        yAxes: [{
+                            display: false,
+                            scaleLabel: {
+                                display: false
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }],
+                        xAxes: [{
+                            display: false,
+                            scaleLabel: {
+                                display: false
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    {% endblock %}
+
+</script>
+
+{% block content %}
+    <div class='col-sm-6'>
+        <canvas id="tasks_chart" width="400" height="400"></canvas>
+    </div>
+{% endblock content %}
