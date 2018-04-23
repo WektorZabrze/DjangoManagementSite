@@ -7,7 +7,7 @@ class PersonForm(forms.ModelForm):
 	password_confirm = forms.CharField(label = "Confirm password", widget = forms.PasswordInput)
 	class Meta:
 		model = Person
-		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth','subordinates', 'position', 'password')
+		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'password')
 
 	def check_password_match (self):
 		password = self.cleaned_data.get("password")
@@ -23,3 +23,10 @@ class PersonForm(forms.ModelForm):
 		if commit:
 			user.save()
 		return user
+
+
+class PersonChangeForm(forms.ModelForm):
+
+	class Meta:
+		model = Person
+		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'subordinates')

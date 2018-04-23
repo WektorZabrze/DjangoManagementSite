@@ -3,7 +3,6 @@ from users.models import Person
 from .models import Task
 
 
-# Marcin working 19.04
 class TaskForm(forms.ModelForm):
 	class Meta:
 		model = Task

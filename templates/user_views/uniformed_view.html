@@ -13,9 +13,9 @@
 			{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
 				<div style = "float: left; margin-right:20px"><a href='/recruit/'>Recruit</a></div>
 				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'>Assign Task</a></div>
-				<div style = "float: left; margin-right:20px">Change position </div>
+				<div style = "float: left; margin-right:20px"><a href='/edit/'>Edit subordinate</a></div>
 			{% elif request.user.position == 'SUP' %}
-				<div style = "float: left; margin-right:20px"> Assign Task</div>
+				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'> Assign Task</a></div>
 			{% endif %}
 			<a href="/tasks/user_tasks/"><div style = "float: left; margin-right:20px">Check tasks</div></a>
 			<a href="/logout/"><div style = "float: left"> Logout</div></a>

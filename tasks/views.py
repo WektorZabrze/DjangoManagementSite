@@ -23,21 +23,19 @@ def search_task(request):
     return render(request, 'tasks/task_search.html', {'filter': tasks_filter})
 
 
-# Marcin changed 19.04 and working
 @login_required
 def task_add(request):
     if request.method == "POST":
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, request = request)
         if form.is_valid():
             task = form.save()
             task.save()
-            return redirect('tasks_list')
+            return redirect('/')
     else:
         form = TaskForm(request = request)
     return render(request, 'tasks/task_form.html', {'form': form})
 
 
-# Marcin 19.04 and working
 @login_required
 def task_edit(request, pk):
     task = get_object_or_404(Task, pk=pk)
@@ -54,5 +52,6 @@ def task_edit(request, pk):
 
 @login_required
 def user_tasks(request):
-    tasks_table = Task.objects.filter(assigned_employee=request.user)
-    return render(request, 'tasks/user_tasks.html', locals())
+	tasks_table = Task.objects.filter(assigned_employee=request.user)
+	tasks_table_subordinates =Task.objects.filter(assigned_employee__in = request.user.subordinates.all())
+	return render(request, 'tasks/user_tasks.html', locals())
