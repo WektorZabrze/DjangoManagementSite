@@ -34,7 +34,6 @@ class UserTestCase(TestCase):
 		# Check if template contains ' Assing Task' option
 		self.assertContains(response, 'Assign Task')
 
-
 		c.logout()
 
 		# Login as temporary manager user
@@ -57,11 +56,27 @@ class UserTestCase(TestCase):
 
 		c.logout()
 
+
+	# Test logout function
 	def test_logout_user(self):
 		url = '/logout/'
 		response = self.client.get(url)
 		# Check if code is 302 - redirection found
 		self.assertEqual(response.status_code, 302)
+
+
+	# Test login function
+	def test_login_user(self):
+		url = '/login/'
+		# Test when user is loged in
+		c = Client()
+		c.login(username = 'temp_worker', password = 'temp_worker')
+		response = c.get(url)
+		self.assertRedirects(response, "/" )
+		c.logout()
+
+
+
 
 
 
