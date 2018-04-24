@@ -3,11 +3,14 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from rest_framework.views import APIView
+from .text_dimensionality_reduction import textdimensionalityreduction
 
 from .filters import TaskFilter
 from .forms import TaskForm
 from .models import Task
 
+#TEMPORARY
+from .load_sentences_to_model import loading
 
 # Faplo - currently working 14.04
 def tasks_list(request):
@@ -20,6 +23,12 @@ def search_task(request):
     tasks_table = Task.objects.all()
     tasks_filter = TaskFilter(request.GET, queryset=tasks_table)
     return render(request, 'tasks/task_search.html', {'filter': tasks_filter})
+
+#temporary - for loading tasks from file to model
+def loading_to_model_tmp(request):
+    loading()
+    return render(request, 'tasks/task_search.html')
+
 
 
 # Marcin changed 19.04 and working
@@ -59,10 +68,11 @@ class ChartData(APIView):
 
     def get(self, request):
         # example, temporary values
-        x_values = [1, 2, 3, 4, 5, 6, 7, 8]
-        y_values = [1, 2, 3, 4, 5, 6, 7, 8]
-        tasks_descriptions = ["task desc 1", "task desc 2", "task desc 3", "task desc 4", "task desc 5", "task desc 6",
-                              "task desc 7", "task desc 8"]
+        chartValuesDictionary = textdimensionalityreduction.sentencesTo2D()
+        x_values = chartValuesDictionary["x"]
+        y_values = chartValuesDictionary["y"]
+        tasks_descriptions = chartValuesDictionary["labels"]
+        # to do - assign color of point by priority
 
         #Here we need to build proper JSON structure as Chart.js we use require such
         all_tasks_chart_data = []

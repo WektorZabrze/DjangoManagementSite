@@ -24,7 +24,7 @@ class Task(models.Model):
             blank=True, null=True)
 
     def __str__(self):
-        return self.task_description
-
+        return self.task_name
+    
     def get_absolute_url(self):
         return "/tasks/"
