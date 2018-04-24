@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'users',
     'tasks',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
