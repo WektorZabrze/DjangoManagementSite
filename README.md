@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/WektorZabrze/DjangoManagementSite/badge.svg?branch=master)](https://coveralls.io/github/WektorZabrze/DjangoManagementSite?branch=master)
+
+
 ## Description
 **Django management site** is a simple Django website for mangaing a company. It consists features such as: 
 * recruitment system
