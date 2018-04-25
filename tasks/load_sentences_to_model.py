@@ -16,8 +16,8 @@ def loading():
 
                 created = Task.objects.get_or_create(
                     task_name = currentSentence,
-                    assigned_employee = Person.objects.get(first_name = "aaaaaaaa"),
+                    assigned_employee = Person.objects.get(first_name = "boss"),
                 )
                 rowNumber += 1
-                if rowNumber == 1:
+                if rowNumber == 100:
                     break
