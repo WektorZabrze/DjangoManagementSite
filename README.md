@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/WektorZabrze/DjangoManagementSite/badge.svg?branch=master)](https://coveralls.io/github/WektorZabrze/DjangoManagementSite?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/WektorZabrze/DjangoManagementSite/badge.svg?branch=master)](https://coveralls.io/github/WektorZabrze/DjangoManagementSite?branch=master) [![Build Status](https://travis-ci.org/WektorZabrze/DjangoManagementSite.svg?branch=master)](https://travis-ci.org/WektorZabrze/DjangoManagementSite)
 
 
 ## Description
