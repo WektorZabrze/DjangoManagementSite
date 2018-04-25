@@ -6,7 +6,7 @@
 * task visualization depending on the task description
 
 ## Installation
-To set up your own website download whole repository, go to main folder and run following command: `python manage.py runserver`. Make sure you got all the **Requirements** installed.
+To set up your own website download whole repository, go to main folder and run following commands: `python manage.py makemigrations`, `python manage.py migrate`, `python manage.py runserver`. Make sure you got all the **Requirements** installed.
 
 ## Requirements
 * [Python 3.5.2](https://www.python.org/)
