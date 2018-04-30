@@ -19,6 +19,17 @@
 			{% endif %}
 			<a href="/tasks/user_tasks/"><div style = "float: left; margin-right:20px">Check tasks</div></a>
 			<a href="/logout/"><div style = "float: left"> Logout</div></a>
+
+			<br>
+			<div id="chat_rooms">
+				<ul class="chat_rooms">
+				{% for room in chat_rooms %}
+					<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
+				{% empty %}
+					<p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
+				{% endfor %}
+				</ul>
+			</div>
 		{% else %}
 			<a href = /login/> Login here </a>
 		{% endif %}

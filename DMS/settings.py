@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'django_tables2',
+    'channels',
     'users',
     'tasks',
+    'chat',
     'rest_framework',
 ]
 
@@ -102,6 +104,21 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+#configuration of redis - it's responsible for chat
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Redis channel layer implementation asgi_redis
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+        },
+       "ROUTING": "DMS.routing.channel_routing", # We will create it in a moment
+    },
+}
 
 
 # Internationalization
