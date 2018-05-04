@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tasks',
     'chat',
     'rest_framework',
+    'django_heroku',
 ]
 
 MIDDLEWARE = [
