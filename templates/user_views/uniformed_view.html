@@ -21,15 +21,24 @@
 			<a href="/logout/"><div style = "float: left"> Logout</div></a>
 
 			<br>
-			<div id="chat_rooms">
-				<ul class="chat_rooms">
-				{% for room in chat_rooms %}
-					<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
-				{% empty %}
-					<p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
-				{% endfor %}
+                <ul class="chat_rooms">
+                    {% for room in chat_rooms %}
+                        <li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
+                    {% empty %}
+                        <p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
+                    {% endfor %}
 				</ul>
-			</div>
+
+				{% load staticfiles %}
+                {% block extra_body %}
+                    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                    <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+                    <script src="{% static "chat.js" %}"></script>
+                {% endblock %}
+
+                    <div id="chats">
+                    <!-- there will be desplayed chats after joining room -->
+                    </div>
 		{% else %}
 			<a href = /login/> Login here </a>
 		{% endif %}
