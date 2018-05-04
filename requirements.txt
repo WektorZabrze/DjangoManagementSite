@@ -9,3 +9,4 @@ matplotlib==2.2.2
 channels==1.1.5
 asgi_redis==1.4.3
 service_identity==17.0.0
+django-heroku==0.3.1
