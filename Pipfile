@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+name = "pypi"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django-filter = "==1.1.0"
+"django-tables2" = "==1.21.2"
+gensim = "==3.4.0"
+djangorestframework = "==3.8.2"
+pandas = "==0.22.0"
+scikit-learn = "==0.19.1"
+matplotlib = "==2.2.2"
+channels = "==1.1.5"
+Django = "==2.0.4"
+asgi_redis = "==1.4.3"
+service_identity = "==17.0.0"
+gunicorn = "*"
+
+[requires]
+python_version = "3.5"

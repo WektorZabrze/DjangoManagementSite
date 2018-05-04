@@ -79,5 +79,3 @@ class UserTestCase(TestCase):
 
 
 
-
-
