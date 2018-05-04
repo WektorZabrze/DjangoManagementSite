@@ -146,9 +146,11 @@ AUTH_USER_MODEL = 'users.Person'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Activate Django-Heroku.
-import django_heroku
-django_heroku.settings(locals())
 
-import matplotlib
-matplotlib.use('Agg')
+# Only on Heroku deployment
+# Activate Django-Heroku.
+#import django_heroku
+#django_heroku.settings(locals())
+
+#import matplotlib
+#matplotlib.use('Agg')
