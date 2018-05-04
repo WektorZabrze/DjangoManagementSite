@@ -1,25 +1,65 @@
 <html>
 <head>
 	<title>Nasza piekna organizacja</title>
+	{% include "../bootstrap/bootstrap_template.html" %}
+	{% load staticfiles %}
+	<link rel='stylesheet' href="{% static 'css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'css/fontello.css' %}" type="text/css" />
 </head>
 
 
 <body>
 		{% if not request.user.is_authenticated %}
 			<h1>
-				<a href = /login/> Login here </a>
+				<div class = "row" style="height:100%">
+					<div style="margin:auto">
+						<div class="col">
+							<a href = /login/ class="login_button"> Login here </a>
+						</div>
+					</div>
+				</div>
 			</h1>
 		{% elif request.user.position %}
-			{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
-				<div style = "float: left; margin-right:20px"><a href='/recruit/'>Recruit</a></div>
-				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'>Assign Task</a></div>
-				<div style = "float: left; margin-right:20px"><a href='/edit/'>Edit subordinate</a></div>
-			{% elif request.user.position == 'SUP' %}
-				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'> Assign Task</a></div>
-			{% endif %}
-			<a href="/tasks/user_tasks/"><div style = "float: left; margin-right:20px">Check tasks</div></a>
-			<a href="/logout/"><div style = "float: left"> Logout</div></a>
-		{% else %}
-			<a href = /login/> Login here </a>
+			<div class = "row" style="height:100%; width: 100%">
+					<div style="margin:auto; width: 100%; height: 60%">
+				{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
+					<div class="row" style="margin:auto">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-8">
+							<div class="row" style = "height: 100%;">
+								<div class="col-sm-4">
+									<a href='/recruit/'><i class="icon-user-plus"></i><!-- Recruit --></a>
+								</div>
+								<div class="col-sm-4">
+									<a href= '/tasks/add/'><i class="icon-doc"></i><!--Assign Task--></a>
+								</div>
+								<div class="col-sm-4">
+									<a href='/edit/'><i class="icon-edit"></i><!-- Edit subordinate --></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-2"></div>
+					</div>
+					<div class="row" style="margin:auto">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-8">
+							<div class="row" style="height: 100%;">
+								{% elif request.user.position == 'SUP' %}
+									<div class="col-sm-4">
+										<a href= '/tasks/add/'><i class="icon-doc"></i> <!-- Assign Tas -->k</a>
+									</div>
+								{% endif %}
+									<div class="col-sm-4">
+										<a href="/tasks/user_tasks/"><i class="icon-tags"></i><!-- Check tasks --></a>
+									</div>
+									<div class="col-sm-4">
+										<a href="/logout/"><i class="icon-logout"></i><!-- Logout --></a>
+									</div>
+							</div>
+						</div>
+						<div class="col-sm-2"></div>
+					</div>
+					</div>
+				</div>
 		{% endif %}
 </body>
