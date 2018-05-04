@@ -149,3 +149,5 @@ LOGOUT_REDIRECT_URL = '/'
 # Activate Django-Heroku.
 import django_heroku
 django_heroku.settings(locals())
+
+matplotlib.use('Agg')
