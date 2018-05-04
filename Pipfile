@@ -18,6 +18,7 @@ Django = "==2.0.4"
 asgi_redis = "==1.4.3"
 service_identity = "==17.0.0"
 gunicorn = "*"
+django-heroku = "*"
 
 [requires]
 python_version = "3.5"
