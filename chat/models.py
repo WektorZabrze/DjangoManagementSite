@@ -1,12 +1,15 @@
 from django.db import models
 from django.utils.six import python_2_unicode_compatible
 from channels import Group
+from users.models import Person
 import json
 
 
 @python_2_unicode_compatible
 class ChatRoom(models.Model):
+    allowed_users = models.ManyToManyField(Person)
     room_name = models.CharField(max_length=255)
+
     #add room for seletected users
 
     #it's responsible for identyfing the current room
