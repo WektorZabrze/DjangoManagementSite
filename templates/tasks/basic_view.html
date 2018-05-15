@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task view</title>
+</head>
+<body>
+{{ task.created_date  }}
+<br>
+{{ task.deadline_date }}
+<br>
+{{ task.task_name }}
+<br>
+{{ task.task_description }}
+<br>
+{{ task.end_date }}
+
+<form action="{% url 'end_task' task.pk %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="end" name="mybtn">
+</form>
+
+</body>
+</html>
