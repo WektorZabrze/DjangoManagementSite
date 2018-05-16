@@ -14,6 +14,10 @@
 {{ task.task_description }}
 <br>
 {{ task.end_date }}
+<br>
+{{ task.priority }}
+<br>
+{{ task.productivity_index }}
 
 <form action="{% url 'end_task' task.pk %}" method="post">
     {% csrf_token %}
