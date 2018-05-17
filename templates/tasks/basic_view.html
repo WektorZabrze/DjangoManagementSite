@@ -19,10 +19,16 @@
 <br>
 {{ task.productivity_index }}
 
-<form action="{% url 'end_task' task.pk %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="end" name="mybtn">
-</form>
-
+{% if task.end_date == None %}
+    <form action="{% url 'end_task' task.pk %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="end" name="mybtn">
+    </form>
+{% else %}
+    <form action="{% url 'revive_task' task.pk %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="revive" name="mybtn">
+    </form>
+{% endif %}
 </body>
 </html>

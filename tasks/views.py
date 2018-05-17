@@ -1,4 +1,5 @@
 import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -90,6 +91,17 @@ def end_task(request, pk):
         task = get_object_or_404(Task, pk=pk)
         task.end_date = datetime.datetime.now()
         task.productivity_index = calculate_performance_index(task)
+        task.save()
+        return render(request, 'tasks/basic_view.html', locals())
+    else:
+        return redirect('tasks_list')
+
+
+def revive_task(request, pk):
+    if request.method == "POST":
+        task = get_object_or_404(Task, pk=pk)
+        task.end_date = None
+        task.productivity_index = None
         task.save()
         return render(request, 'tasks/basic_view.html', locals())
     else:
