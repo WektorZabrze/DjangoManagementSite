@@ -9,57 +9,53 @@
 
 
 <body>
-		{% if not request.user.is_authenticated %}
-			<h1>
-				<div class = "row" style="height:100%">
-					<div style="margin:auto">
-						<div class="col">
-							<a href = /login/ class="login_button"> Login here </a>
-						</div>
-					</div>
+	<div class="container">
+		<div class="d-flex align-items-center justify-content-center" style="height: 100%">
+			{% if not request.user.is_authenticated %} 
+				<div class="d-flex align-items-center justify-content-center" style = "height: 100%">
+					<a href = /login/ class="login_button">
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-logout" style="min-width: 1000px"></i><span>Login</span>
+						</button>
+					</a>
 				</div>
-			</h1>
-		{% elif request.user.position %}
-			<div class = "row" style="height:100%; width: 100%">
-					<div style="margin:auto; width: 100%; height: 60%">
+			{% elif request.user.position %}
+			<div class="d-flex align-items-center justify-content-center flex-wrap">
 				{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
-					<div class="row" style="margin:auto">
-						<div class="col-sm-2"></div>
-						<div class="col-sm-8">
-							<div class="row" style = "height: 100%;">
-								<div class="col-sm-4">
-									<a href='/recruit/'><i class="icon-user-plus"></i><!-- Recruit --></a>
-								</div>
-								<div class="col-sm-4">
-									<a href= '/tasks/add/'><i class="icon-doc"></i><!--Assign Task--></a>
-								</div>
-								<div class="col-sm-4">
-									<a href='/edit/'><i class="icon-edit"></i><!-- Edit subordinate --></a>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-2"></div>
-					</div>
-					<div class="row" style="margin:auto">
-						<div class="col-sm-2"></div>
-						<div class="col-sm-8">
-							<div class="row" style="height: 100%;">
-								{% elif request.user.position == 'SUP' %}
-									<div class="col-sm-4">
-										<a href= '/tasks/add/'><i class="icon-doc"></i> <!-- Assign Tas -->k</a>
-									</div>
-								{% endif %}
-									<div class="col-sm-4">
-										<a href="/tasks/user_tasks/"><i class="icon-tags"></i><!-- Check tasks --></a>
-									</div>
-									<div class="col-sm-4">
-										<a href="/logout/"><i class="icon-logout"></i><!-- Logout --></a>
-									</div>
-							</div>
-						</div>
-						<div class="col-sm-2"></div>
-					</div>
-					</div>
-				</div>
-		{% endif %}
+					<a href='/recruit/'>
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-user-plus"></i><span>Recruit</span>
+						</button>
+					</a>
+					<a href= '/tasks/add/'>
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-doc"></i><span>Assign Task</span>
+						</button>
+					</a>
+					<a href='/edit/'>
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-edit"></i><span>Edit Subordinate</span>
+						</button>
+					</a>
+				{% elif request.user.position == 'SUP' %}
+					<a href= '/tasks/add/'>
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-doc"></i><span>Assign Task</span>
+						</button>
+					</a>
+				{% endif %}
+					<a href="/tasks/user_tasks/">
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-tags"></i><span>Check tasks</span>
+						</button>
+					</a>
+					<a href="/logout/">
+						<button type="button" class="btn btn-primary effects">
+							<i class="icon-logout"></i><span>Logout</span>
+						</button>
+					</a>
+			</div>
+			{% endif %}
+		</div>
+	</div>
 </body>
