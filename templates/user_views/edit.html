@@ -1,3 +1,11 @@
+<head>
+    <title>User tasks</title>
+    {% include "../bootstrap/bootstrap_template.html" %}
+    {% load staticfiles %}
+    <link rel='stylesheet' href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontello.css' %}" type="text/css" />
+</head>
+
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}

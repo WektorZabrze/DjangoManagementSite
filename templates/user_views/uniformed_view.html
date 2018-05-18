@@ -1,27 +1,73 @@
 <html>
 <head>
 	<title>Nasza piekna organizacja</title>
+	{% include "../bootstrap/bootstrap_template.html" %}
+	{% load staticfiles %}
+	<link rel='stylesheet' href="{% static 'css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'css/fontello.css' %}" type="text/css" />
 </head>
 
 
 <body>
-		{% if not request.user.is_authenticated %}
-			<h1>
-				<a href = /login/> Login here </a>
-			</h1>
-		{% elif request.user.position %}
-			{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
-				<div style = "float: left; margin-right:20px"><a href='/recruit/'>Recruit</a></div>
-				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'>Assign Task</a></div>
-				<div style = "float: left; margin-right:20px"><a href='/edit/'>Edit subordinate</a></div>
-			{% elif request.user.position == 'SUP' %}
-				<div style = "float: left; margin-right:20px"><a href= '/tasks/add/'> Assign Task</a></div>
+	<div class="container">
+		<div class="d-flex align-items-center justify-content-center" style="height: 100%">
+			{% if not request.user.is_authenticated %} 
+				<div class="d-flex align-items-center justify-content-center" style = "height: 100%">
+					<a href='/login/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-logout"></i><span>Login</span>
+						</button>
+					</a>
+					<a href='/admin/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-logout"></i><span>Admin</span>
+						</button>
+					</a>
+				</div>
+			{% elif request.user.position %}
+			<div class="d-flex align-items-center justify-content-center flex-wrap">
+				{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
+					<a href='/recruit/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-user-plus"></i><span>Recruit</span>
+						</button>
+					</a>
+					<a href= '/tasks/add/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-doc"></i><span>Assign Task</span>
+						</button>
+					</a>
+					<a href='/edit/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-edit"></i><span>Edit Subordinate</span>
+						</button>
+					</a>
+				{% elif request.user.position == 'SUP' %}
+					<a href= '/tasks/add/'>
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-doc"></i><span>Assign Task</span>
+						</button>
+					</a>
+				{% endif %}
+					<a href="/tasks/user_tasks/">
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-tags"></i><span>Check tasks</span>
+						</button>
+					</a>
+					<a href="/chat/" target="_blank">
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-tags"></i><span>Chat</span>
+						</button>
+					</a>
+					<a href="/logout/">
+						<button type="button" class="btn btn-info effects">
+							<i class="icon-logout"></i><span>Logout</span>
+						</button>
+					</a>
+			</div>
 			{% endif %}
-			<a href="/tasks/user_tasks/"><div style = "float: left; margin-right:20px">Check tasks</div></a>
-			<a href="/logout/"><div style = "float: left"> Logout</div></a>
-
-			<br>
-                <ul class="chat_rooms">
+		</div>
+		 <ul class="chat_rooms">
                     {% for room in chat_rooms %}
                         <li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
                     {% empty %}
@@ -34,12 +80,9 @@
                     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
                     <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
                     <script src="{% static "chat.js" %}"></script>
-                {% endblock %}
-
-                    <div id="chats">
+			{% endblock %}
+			<div id="chats">
                     <!-- there will be desplayed chats after joining room -->
-                    </div>
-		{% else %}
-			<a href = /login/> Login here </a>
-		{% endif %}
+			</div>
+	</div>
 </body>
