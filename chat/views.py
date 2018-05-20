@@ -35,4 +35,5 @@ def chat_add(request):
 @login_required
 def chat_view(request, pk):
     room = get_object_or_404(ChatRoom, pk=pk)
+    current_username = request.user.username # used to define whether the user is the author of the message
     return render(request, 'chat/chat_room.html', locals())

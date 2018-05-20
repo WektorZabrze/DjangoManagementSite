@@ -1,114 +1,80 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Title</title>#}
-{#</head>#}
-{#<body>#}
-{#{{ chat.room_name }}#}
-{#</body>#}
-{#</html>#}
+{% load staticfiles %}
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
- <ul class="chat_rooms">
-        <li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
-</ul>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+    <script
+        src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
 
-<script>
-$(function () {
-    // provide the secured transmission whenever it's possible
-    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/chat/stream/";
-    console.log("Connecting to " + ws_path);
-    var socket = new ReconnectingWebSocket(ws_path);
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    //For debugging purposes
-    socket.onopen = function () {
-        console.log("Connected to the chat socket");
-    };
+    <link rel="stylesheet" href="{% static 'chat_style.css' %}">
+    <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
-    socket.onclose = function () {
-        console.log("Disconnected from the chat socket");
-    };
 
-    socket.onmessage = function (message) {
-    // Decode the JSON
-    console.log("Got websocket message " + message.data);
-    var data = JSON.parse(message.data);
-    // Handle errors
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
-        // Handle joining
-        if (data.join) {
-            console.log("Joining room " + data.join);
-            var roomdiv = $(
-                "<div class='room' id='room-" + data.join + "'>" +
-                "<h2>" + data.title + "</h2>" +
-                "<div class='messages'></div>" +
-                "<input><button>Send</button>" +
-                "</div>"
-            );
-            $("#chats").append(roomdiv);
-            roomdiv.find("button").on("click", function(){
-                socket.send(JSON.stringify({
-                    "command": "send", //uses send handler
-                    "room": data.join, //it stores the room id
-                    "message": roomdiv.find("input").val()
-                }));
-            });
-            // Handle leaving
-        } else if (data.leave) {
-            console.log("Leaving room " + data.leave);
-            $("#room-" + data.leave).remove();
-        } else if (data.message) { //in future it may also handle different types of messages!
-            var msg_div = $("room-" + data.room + ".messages");
-            var msg_content = "<div class='message'>" +
-                        "<span class='username'>" + data.username + "</span>" +
-                        "<span class='body'>" + data.message + "</span>" +
-                        "</div>";
-            msg_div.append(msg_content);
-            msg_div.scrollTop(msg_div.prop("scrollHeight"));
-        }
-        else {
-            console.log("Cannot handle message!");
-        }
-    }
+	<title>Room "{{ room.id }}"</title>
+</head>
+    <body>
+    <div class="container">
+        <div class="row form-group">
+            <div class="col-xs-12 col-md-offset-2 col-md-8 col-lg-8 col-lg-offset-2">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-comment"></span> {{ room }}
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
+                            <ul class="dropdown-menu slidedown">
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
+                                </span>Refresh</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
+                                </span>Available</a></li>
+                                <li><a href="hasasttp://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
+                                </span>Busy</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
+                                    Away</a></li>
+                                <li class="divider"></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
+                                    Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body body-panel">
+                        <!-- here the messages will be displayed -->
+                        <ul class="chat">
+                        </ul>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <textarea id="message" class="form-control" rows="3"></textarea>
+                        <span class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-xs-12" style="margin-top: 10px">
+                            <button class="btn btn-warning btn-lg btn-block" id="btn-chat">Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    // checks whether user joined a room
-    //if it doesn't found a room with our id within div id="chats"
-    //then the length of text equals 0
-    inRoom = function(roomId){
-           return $("#room-" + roomId).length > 0;
-    };
 
-    $("li.room-link").click(function () {
-        console.log("Clicked");
-        roomId = $(this).attr("data-room-id");
-        if (inRoom(roomId)) {
-            console.log("Leaving room");
-            // Leave room
-            $(this).removeClass("joined");
-            socket.send(JSON.stringify({
-                "command": "leave",  // determines which handler will be used (see chat/routing.py)
-                "room": roomId
-            }));
-        } else {
-            // Join room
-            $(this).addClass("joined");
-            socket.send(JSON.stringify({
-                "command": "join",
-                "room": roomId
-            }));
-        }
-});
 
-});
-</script>
+    <!-- temporary solution - it's not injection proof! -->
+    <script>
+         var room_id = "{{ room.id }}";
+         var username = "{{ current_username }}";
+    </script>
 
-<div id="chats">
-<!-- there will be desplayed chats after joining room -->
-</div>
+    {% block extra_body %}
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+        <script src="{% static "chat_room.js" %}"></script>
+    {% endblock %}
+
+</body>

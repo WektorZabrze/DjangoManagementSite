@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Chat list</title>
 </head>
 <body>
-    {% for room in list_of_rooms %}
-        <a href = "{% url 'chat_view' room.id %}"> {{ room.room_name }}  </a>
-        <br>
-    {% endfor %}
+
+    <ul class = "chat_rooms">
+        {% for room in list_of_rooms %}
+            <li><a href = "{% url 'chat_view' room.id %}"> {{ room.room_name }}  </a></li>
+        {% empty %}
+            <p>There's no chat rooms available for you.</p>
+            <p>You may try adding it <a href = "chat/add/">here</a></p>
+        {% endfor %}
+    </ul>
 </body>
 </html>
