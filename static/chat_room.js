@@ -8,11 +8,21 @@ $(function () {
     //For debugging purposes
     socket.onopen = function () {
         console.log("Connected to the chat socket");
+
+        //it has to wait until the end of estabilishing socket connection
+         socket.send(JSON.stringify({
+            "command": "join",
+            "room": room_id
+        }));
     };
 
     socket.onclose = function () {
         console.log("Disconnected from the chat socket");
     };
+
+    console.log( "To jest id pokoju" +  room_id )
+
+
 
     socket.onmessage = function (message) {
     // Decode the JSON
@@ -41,16 +51,39 @@ $(function () {
                     "message": roomdiv.find("input").val()
                 }));
             });
+
+            //NEW FRONTEND
+
+            $("#btn-chat").on("click", function(){
+                const message = $("#message").val();
+                $("#message").val(""); //clear text input
+
+                socket.send(JSON.stringify({
+                    "command": "send", //uses send handler
+                    "room": data.join, //it stores the room id
+                    "message": message
+                }));
+            });
+
             // Handle leaving
         } else if (data.leave) {
+            //IT SHOULD BE SOMEHOW MODIFIED
             console.log("Leaving room " + data.leave);
             $("#room-" + data.leave).remove();
         } else if (data.message) { //in future it may also handle different types of messages!
-            var msg_div = $("room-" + data.room + ".messages");
-            var msg_content = "<div class='message'>" +
-                        "<span class='username'>" + data.username + "</span>" +
-                        "<span class='body'>" + data.message + "</span>" +
-                        "</div>";
+            var msg_div = $(".chat");
+
+            if (username == data.username)
+            {
+                var msg_content =  "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+                                    data.username + ": </span><span class='body'>" + data.message + "</span> </p></div></li>";
+            }
+            else
+            {
+                var msg_content =  "<li class='left clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+                                    data.username + ": </span><span class='body'>" + data.message + "</span> </p></div></li>";
+            }
+
             msg_div.append(msg_content);
             msg_div.scrollTop(msg_div.prop("scrollHeight"));
         }
@@ -62,6 +95,7 @@ $(function () {
     // checks whether user joined a room
     //if it doesn't found a room with our id within div id="chats"
     //then the length of text equals 0
+    /*
     inRoom = function(roomId){
            return $("#room-" + roomId).length > 0;
     };
@@ -85,6 +119,6 @@ $(function () {
                 "room": roomId
             }));
         }
-});
+});*/
 
 });
