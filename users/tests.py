@@ -2,80 +2,252 @@ from django.test import TestCase
 from django.test import Client
 from .views import index
 from .models import Person
+from .forms import PersonForm
+from .forms import PersonChangeForm
+from .apps import UsersConfig
 
-# Test methods from users app
-class UserTestCase(TestCase):
+class UserViewsTestCase(TestCase):
 	# Create some users for testing purposes
-	def setUp(self):
-		user_boss = Person.objects.create_user(username = 'temp_boss', password = 'temp_boss', position = "BOS" )
-		user_manager = Person.objects.create_user(username = 'temp_manager', password = 'temp_manager', position = "MAN")
-		user_worker = Person.objects.create_user(username = 'temp_worker', password = 'temp_worker', position = "WOR")
+	@classmethod
+	def setUpTestData(cls):
+		cls.user_boss = Person.objects.create_user(username = 'temp_boss', password = 'temp_boss', position = "BOS" )
+		cls.user_manager = Person.objects.create_user(username = 'temp_manager', password = 'temp_manager', position = "MAN")
+		cls.user_worker = Person.objects.create_user(username = 'temp_worker', password = 'temp_worker', position = "WOR")
+		cls.user_supervisor = Person.objects.create_user(username = 'temp_supervisor', password = 'temp_supervisor', position = "SUP")
+
+	# Test views - each page
 
 
-
-	# Test index method
-	def test_index(self):
+	def test_index_page(self):
+		'''Testing index page - our starting page '''
 		url = ''
 		response = self.client.get(url)
-		# Check response code - if 200 then its ok
+		#Check response code - if 200 then its ok
 		self.assertEqual(response.status_code, 200)
 		# Check if correct template has been used
 		self.assertTemplateUsed(response,  'user_views/uniformed_view.html')
-		# Check if returned template contains 'Login here'
-		self.assertContains(response, 'Login here')
 
-		# Login as temporary boss user
+	def test_index_page_boss(self):
+		''' Testing index page with boss user loged in '''
+		url = ''
+		response = self.client.get(url)
+		# When user is loged in, he has some options to choose
+		# Now testing those options
+
+		# Login as temporaty boss user
 		c = Client()
 		c.login(username = 'temp_boss', password = 'temp_boss')
 		response = c.get(url)
 
+		# Test apperence of six main functionalities 
+		# that are available for boss
+
 		# Check if template containt 'Recruit' option
 		self.assertContains(response, 'Recruit')
-		# Check if template contains ' Assing Task' option
+		# Check if template contains 'Assing Task' option
 		self.assertContains(response, 'Assign Task')
+		# Check if template contains 'Edit subordinate' option
+		self.assertContains(response, 'Edit Subordinate')
+		# Check if template contains 'Chat' option
+		self.assertContains(response, 'Chat')
+		# Check if template contains 'Check tasks' option
+		self.assertContains(response, 'Check tasks')
+		# Check if template contains 'Logout' option
+		self.assertContains(response, 'Logout')
 
+		# Logout from boss account
 		c.logout()
 
-		# Login as temporary manager user
+	def test_index_page_manager(self): 
+		''' Testing index page with manager user loged in '''
+		url = ''
+		response = self.client.get(url)
+
+		#  Login as temporary manager user
 		c = Client()
 		c.login(username = 'temp_manager', password = 'temp_manager')
 		response = c.get(url)
 
+		# Check if template containt 'Recruit' option
+		self.assertContains(response, 'Recruit')
+		# Check if template contains 'Assing Task' option
+		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Edit subordinate' option
-		self.assertContains(response, 'Edit subordinate')
+		self.assertContains(response, 'Edit Subordinate')
+		# Check if template contains 'Chat' option
+		self.assertContains(response, 'Chat')
+		# Check if template contains 'Check tasks' option
+		self.assertContains(response, 'Check tasks')
+		# Check if template contains 'Logout' option
+		self.assertContains(response, 'Logout')
 
+		# Logout from manager account
 		c.logout()
 
-		# Login as temporary worker user
+	def test_index_page_supervisor(self):
+		''' Testing index page with supervisor user loged in '''
+		url = ''
+		response = self.client.get(url)
+
+		#  Login as temporary supervisor user
 		c = Client()
-		c.login(username = 'temp_worker', password = 'temp_worker')
+		c.login(username = 'temp_supervisor', password = 'temp_supervisor')
 		response = c.get(url)
 
-		# Check if template does not contain 'Recruit' option
+		# Check if template contains 'Assing Task' option
+		self.assertContains(response, 'Assign Task')
+		# Check if template contains 'Chat' option
+		self.assertContains(response, 'Chat')
+		# Check if template contains 'Check tasks' option
+		self.assertContains(response, 'Check tasks')
+		# Check if template contains 'Logout' option
+		self.assertContains(response, 'Logout')
+
+		# Check if template does not contain higher lever options
+		self.assertNotContains(response, 'Edit Subordinate')
 		self.assertNotContains(response, 'Recruit')
 
+		# Logout from manager account
 		c.logout()
 
-
-	# Test logout function
-	def test_logout_user(self):
-		url = '/logout/'
+	def test_index_page_worker(self):
+		''' Testing index page with worker user loged in '''
+		url = ''
 		response = self.client.get(url)
-		# Check if code is 302 - redirection found
-		self.assertEqual(response.status_code, 302)
 
-
-	# Test login function
-	def test_login_user(self):
-		url = '/login/'
-		# Test when user is loged in
+		#  Login as temporary worker user
 		c = Client()
 		c.login(username = 'temp_worker', password = 'temp_worker')
 		response = c.get(url)
-		self.assertRedirects(response, "/" )
+		
+		# Check if template contains 'Chat' option
+		self.assertContains(response, 'Chat')
+		# Check if template contains 'Check tasks' option
+		self.assertContains(response, 'Check tasks')
+		# Check if template contains 'Logout' option
+		self.assertContains(response, 'Logout')
+
+		# Check if template does not contain higher lever options
+		self.assertNotContains(response, 'Edit Subordinate')
+		self.assertNotContains(response, 'Recruit')
+		self.assertNotContains(response, 'Assign Task')
+
+		# Logout from manager account
 		c.logout()
 
+	def test_log_in(self):
+		c = Client()
+		# Check id existing user can log in correctly
+		is_logged_in = c.login(username = 'temp_worker', password = 'temp_worker')
+		self.assertTrue(is_logged_in)
+		response = self.client.get('/login/')
+		self.assertEqual(response.status_code, 200)
+		response = c.get('/login/')
+		self.assertRedirects(response, "/")
+		self.assertEqual(response.status_code, 302)
+		c.logout()
+		# Check if non-existing user can not log in
+		is_logged_in = c.login(username = 'aaa', password = 'aaa')
+		self.assertFalse(is_logged_in)
 
 
+	def test_log_out(self):
+	 	url = '/logout/'
+	 	c = Client()
+	 	c.login(username = 'temp_worker', password = 'temp_worker')
+	 	response = self.client.get(url)
+	 	self.assertEqual(response.status_code, 302)
+	 	c.logout()
+
+	def test_edit_view(self):
+		url = '/edit/'
+		c = Client()
+		c.login(username = 'temp_boss', password = 'temp_boss')
+		response = c.get(url)
+		self.assertTemplateUsed(response, 'user_views/edit.html')
+		self.assertEqual(response.status_code, 200)
+		c.logout()
+
+	def test_recruit_view(self):
+		url = '/recruit/'
+		c = Client()
+		c.login(username = 'temp_boss', password = 'temp_boss')
+		response = c.get(url)
+		self.assertTemplateUsed(response, 'user_views/recruit.html')
+		self.assertEqual(response.status_code, 200)
+		c.logout()
+
+class UserFormsTestCase(TestCase):
+	''' Test forms in users app'''
+	def test_PersonForm_valid(self):
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		form = PersonForm(data = data)
+		self.assertTrue(form.is_valid())
+
+	def test_PersonForm_invalid_password(self):
+		''' No password confirm '''
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa'}
+		form = PersonForm(data = data)
+		self.assertFalse(form.is_valid())
+
+	def test_PersonForm_invalid_incomplete(self):
+		''' Username not provided '''
+		data = {'username' : '', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		form = PersonForm(data = data)
+		self.assertFalse(form.is_valid())
+
+	def test_PersonForm_save(self):
+		''' Test save method '''
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		form = PersonForm(data = data)
+		self.assertIsInstance(form.save(), Person)
 
 
+	def test_PersonChangeForm_valid(self):
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'subordinates' : ''}
+		form = PersonChangeForm(data = data)
+		self.assertTrue(form.is_valid())
+
+	def test_PersonChangeForm_invalid(self):
+		''' No username '''
+		data = {'username' : '', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'subordinates' : ''}
+		form = PersonChangeForm(data = data)
+		self.assertFalse(form.is_valid())
+
+class PersonModelTestCase(TestCase):
+
+	def test_Person_creation(self):
+		person = Person.objects.create_user(username = 'temp_boss', password = 'temp_boss', position = "BOS" )
+		self.assertIsInstance(person, Person)
+
+	def test_Person_fields(self):
+		person = Person.objects.create_user(username = 'temp_boss', password = 'temp_boss', position = "BOS" )
+		self.assertEqual(person.username, "temp_boss")
+		self.assertEqual(person.position, 'BOS')
+		self.assertEqual(person.date_of_birth, '1900-01-01')
+		self.assertIsInstance(person.personal_id, int)
+		self.assertFalse(person.is_admin)
+
+		
+class AppsTestCase(TestCase):
+
+	def test_apps(self):
+		self.assertEqual(UsersConfig.name, 'users')
