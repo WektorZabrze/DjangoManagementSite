@@ -4,6 +4,8 @@ from channels import Group
 from users.models import Person
 import json
 
+from .message_type import MSG_TYPE_MESSAGE
+
 
 @python_2_unicode_compatible
 class ChatRoom(models.Model):
@@ -18,9 +20,9 @@ class ChatRoom(models.Model):
         return Group("room-%s" % self.id)
 
     #ADD TYPES OF MESSAGES
-    def send_message(self, message, user):
+    def send_message(self, message, user, msg_type=MSG_TYPE_MESSAGE):
         '''it sends a message from the user'''
-        message_json = {"room": str(self.id), "message": message, "username": user.username}
+        message_json = {"room": str(self.id), "message": message, "username": user.username, "msg_type": msg_type}
         self.websocket_group.send(
             {"text": json.dumps(message_json)}
         )

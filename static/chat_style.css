@@ -34,6 +34,12 @@
     margin-right: 5px;
 }
 
+.panel-heading
+{
+    padding-top: 4px;
+    height: 45px;
+}
+
 .body-panel
 {
     overflow-y: scroll;

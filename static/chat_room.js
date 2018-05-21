@@ -9,6 +9,7 @@ $(function () {
     socket.onopen = function () {
         console.log("Connected to the chat socket");
 
+        $(this).addClass("joined");
         //it has to wait until the end of estabilishing socket connection
          socket.send(JSON.stringify({
             "command": "join",
@@ -35,25 +36,6 @@ $(function () {
         }
         // Handle joining
         if (data.join) {
-            console.log("Joining room " + data.join);
-            var roomdiv = $(
-                "<div class='room' id='room-" + data.join + "'>" +
-                "<h2>" + data.title + "</h2>" +
-                "<div class='messages'></div>" +
-                "<input><button>Send</button>" +
-                "</div>"
-            );
-            $("#chats").append(roomdiv);
-            roomdiv.find("button").on("click", function(){
-                socket.send(JSON.stringify({
-                    "command": "send", //uses send handler
-                    "room": data.join, //it stores the room id
-                    "message": roomdiv.find("input").val()
-                }));
-            });
-
-            //NEW FRONTEND
-
             $("#btn-chat").on("click", function(){
                 const message = $("#message").val();
                 $("#message").val(""); //clear text input
@@ -69,20 +51,29 @@ $(function () {
         } else if (data.leave) {
             //IT SHOULD BE SOMEHOW MODIFIED
             console.log("Leaving room " + data.leave);
-            $("#room-" + data.leave).remove();
-        } else if (data.message) { //in future it may also handle different types of messages!
-            var msg_div = $(".chat");
 
-            if (username == data.username)
-            {
-                var msg_content =  "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+        } else if (data.message || data.msg_type != 0) { //in future it may also handle different types of messages!
+            var msg_div = $(".chat");
+            var msg_content = ""
+
+            switch (data.msg_type) {
+            case 0://normal message
+                if (username == data.username)
+                    msg_content =  "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
                                     data.username + ": </span><span class='body'>" + data.message + "</span> </p></div></li>";
-            }
-            else
-            {
-                var msg_content =  "<li class='left clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+                else
+                    msg_content =  "<li class='left clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
                                     data.username + ": </span><span class='body'>" + data.message + "</span> </p></div></li>";
-            }
+                break;
+            case 1://user join
+                    msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+                                    data.username + " </span><span class='body'>joins the room!</span> </p></div></li>";
+                break;
+            case 2://user left
+                msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
+                                    data.username + " </span><span class='body'>left the room!</span> </p></div></li>";
+                break;
+             }
 
             msg_div.append(msg_content);
             msg_div.scrollTop(msg_div.prop("scrollHeight"));
@@ -90,7 +81,22 @@ $(function () {
         else {
             console.log("Cannot handle message!");
         }
+
+
     }
+
+    $("button.btn.btn-info").click(function () {
+        console.log("Clicked");
+        console.log("Leaving room");
+        // Leave room
+        $(this).removeClass("joined");
+        socket.send(JSON.stringify({
+            "command": "leave",  // determines which handler will be used (see chat/routing.py)
+            "room": room_id
+            }));
+        //redirect back to the chat list
+        window.location.href = "/chat/";
+    });
 
     // checks whether user joined a room
     //if it doesn't found a room with our id within div id="chats"
