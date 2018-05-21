@@ -80,5 +80,9 @@ a:hover {
 }
 
 body {
-  background-image: url("http://ikconinfotech.com/blog/wp-content/uploads/2018/03/web-designer-pune-background.jpg");
+  background-image: url("../simple-background.jpg");
+}
+.navbar-light{
+   background-image: url("../navbar.png");
+
 }

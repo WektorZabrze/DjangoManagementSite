@@ -6,5 +6,6 @@ urlpatterns = [
 	url (r'^logout/', views.logout_user),
 	url(r'^recruit/', views.recruit),
 	url(r'^edit/', views.edit),
+	url(r'^chat/', views.chat),
 	url(r'', views.index),
 ]

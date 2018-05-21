@@ -10,8 +10,12 @@ from .forms import PersonForm, PersonChangeForm
 
 #modified by Faplo 30.04 for chat purposes
 def index(request):
-    chat_rooms = ChatRoom.objects.order_by("room_name")
     return render(request, 'user_views/uniformed_view.html', locals())
+
+@login_required
+def chat(request):
+    chat_rooms = ChatRoom.objects.order_by("room_name")
+    return render(request, 'chat/chat.html', locals())
 
 @login_required
 def logout_user(request):

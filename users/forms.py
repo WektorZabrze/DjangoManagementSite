@@ -9,16 +9,16 @@ class PersonForm(forms.ModelForm):
 		model = Person
 		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'password')
 
-	def check_password_match (self):
+	def clean (self):
+		cleaned_data = super(PersonForm, self).clean()
 		password = self.cleaned_data.get("password")
 		password_confirm = self.cleaned_data.get("password_confirm")
 
 		if password and password_confirm and password != password_confirm:
-			raise forms.ValidationError("Passwords dont't match")
-		return password_confirm
+			self.add_error('password_confirm', 'Password does not match.')
 
-	def save(self, commit = True):
-		user = super().save(commit = False)
+	def save(self, commit=True):
+		user = super(PersonForm, self).save(commit = False)
 		user.set_password(self.cleaned_data["password"])
 		if commit:
 			user.save()

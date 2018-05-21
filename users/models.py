@@ -15,3 +15,14 @@ class Person(AbstractUser):
 		('WOR', 'Worker'),
 		), default = 'WOR',
 	)
+
+	def get_full_name(self):
+		if self.position == "BOS":
+			position = "Boss"
+		elif self.position == "MAN":
+			position = "Manager"
+		elif self.position == "SUP":
+			position = "Supervisor"
+		else:
+			position = "Worker"
+		return self.first_name + " " + self.surname + " (" + position + ")"
