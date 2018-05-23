@@ -1,4 +1,11 @@
 @import url("http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+
+.body-panel
+{
+    overflow-y: scroll;
+    height: 250px;
+}
+
 .chat
 {
     list-style: none;
@@ -34,10 +41,20 @@
     margin-right: 5px;
 }
 
-.body-panel
+.panel-heading
 {
-    overflow-y: scroll;
-    height: 250px;
+    padding-top: 4px;
+    height: 45px;
+}
+
+p.leave-join
+{
+    text-decoration: underline;
+}
+
+span.username
+{
+    font-weight: bold;
 }
 
 ::-webkit-scrollbar-track
