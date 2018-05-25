@@ -8,7 +8,15 @@
 
     <ul class = "chat_rooms">
         {% for room in list_of_rooms %}
-            <li><a href = "{% url 'chat_view' room.id %}"> {{ room.room_name }}  </a></li>
+            <li><a href = "{% url 'chat_view' room.id %}"> {{ room.room_name }}  </a>
+                {% for person in room.allowed_users.all %}
+                    {{ person.first_name  }} {{person.surname}}
+                {% endfor %}
+                <form action="{% url 'chat_remove' room.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Delete" />
+                </form>
+            </li>
         {% empty %}
             <p>There's no chat rooms available for you.</p>
             <p>You may try adding it <a href = "chat/add/">here</a></p>

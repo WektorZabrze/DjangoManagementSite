@@ -26,10 +26,17 @@ def chat_add(request):
             #adding person creating room to allowed users
             chat.allowed_users.add(request.user.personal_id)
             chat.save()
-            return redirect('/')
+            return redirect('/chat/')
     else:
         form = ChatForm()
     return render(request, 'chat/chat_form.html', {'form': form})
+
+
+@login_required
+def chat_remove(request, pk):
+    if request.method == "POST":
+        get_object_or_404(ChatRoom, pk=pk).delete()
+    return redirect('/chat/')
 
 
 @login_required

@@ -29,7 +29,8 @@ def login_user(request):
     else:
         return redirect('/')
 
-@login_required()
+
+@login_required
 def productivity_index(request):
     p_index = request.user.productivity_index = calculate_productivity_index(request.user.personal_id)
     return render(request, 'user_views/productivity_index.html', locals())
