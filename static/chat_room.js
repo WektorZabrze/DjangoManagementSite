@@ -21,7 +21,6 @@ $(function () {
         console.log("Connected to the chat socket");
 
         $(this).addClass("joined");
-
         //it has to wait until the end of estabilishing socket connection
          socket.send(JSON.stringify({
             "command": "join",
@@ -44,8 +43,6 @@ $(function () {
         }
         // Handle joining
         if (data.join) {
-            //it has to be made here to ensure that connection is estabilished
-            //it sets action which is resposnsible for sending message on button click
             $("#btn-chat").on("click", function(){
                 const message = $("#message").val();
                 $("#message").val(""); //clear text input
@@ -80,11 +77,9 @@ $(function () {
             // Handle leaving
         } else if (data.leave) {
             console.log("Leaving room " + data.leave);
-        } else if (data.message || data.msg_type != 0) {
+        } else if (data.message || data.msg_type != 0) { //in future it may also handle different types of messages!
             var msg_div = $(".chat");
-
             var msg_content = ""
-
             switch (data.msg_type) {
             case 0://normal message
                 if (username == data.username)
@@ -95,11 +90,11 @@ $(function () {
                                     data.username + ": </span><span class='body'>" + data.message + "</span> </p></div></li>";
                 break;
             case 1://user join
-                    msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p class='leave-join'><span class='username'>" +
+                    msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
                                     data.username + " </span><span class='body'>joins the room!</span> </p></div></li>";
                 break;
             case 2://user left
-                msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p class='leave-join'><span class='username'>" +
+                msg_content = "<li class='right clearfix'><div class='chat-body clearfix'><p><span class='username'>" +
                                     data.username + " </span><span class='body'>left the room!</span> </p></div></li>";
                 break;
              }
@@ -112,6 +107,49 @@ $(function () {
         else {
             console.log("Cannot handle message!");
         }
+
+
     }
 
+    $("button.btn.btn-info").click(function () {
+        console.log("Clicked");
+        console.log("Leaving room");
+        // Leave room
+        $(this).removeClass("joined");
+        socket.send(JSON.stringify({
+            "command": "leave",  // determines which handler will be used (see chat/routing.py)
+            "room": room_id
+            }));
+        //redirect back to the chat list
+        window.location.href = "/chat/";
+    });
+
+    // checks whether user joined a room
+    //if it doesn't found a room with our id within div id="chats"
+    //then the length of text equals 0
+    /*
+    inRoom = function(roomId){
+           return $("#room-" + roomId).length > 0;
+    };
+
+    $("li.room-link").click(function () {
+        console.log("Clicked");
+        roomId = $(this).attr("data-room-id");
+        if (inRoom(roomId)) {
+            console.log("Leaving room");
+            // Leave room
+            $(this).removeClass("joined");
+            socket.send(JSON.stringify({
+                "command": "leave",  // determines which handler will be used (see chat/routing.py)
+                "room": roomId
+            }));
+        } else {
+            // Join room
+            //window.open('/templates/chat/chat_popup.html', 'dummyname', 'height=undefined,width=undefined', false);            $(this).addClass("joined");
+            socket.send(JSON.stringify({
+                "command": "join",
+                "room": roomId
+            }));
+        }
+});*/
 });
