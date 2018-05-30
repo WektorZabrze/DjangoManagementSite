@@ -86,3 +86,15 @@ body {
    background-image: url("../navbar.png");
 
 }
+
+table{
+  background-color: white !important;
+}
+
+.inputfield{
+  background-color: #EFEFEF;
+  text-align: center;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  padding: 20px;
+}

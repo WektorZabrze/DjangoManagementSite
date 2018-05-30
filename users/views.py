@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django import forms
 from django.http import HttpResponse
 from users.models import Person
 from chat.models import ChatRoom
@@ -6,7 +7,7 @@ from django.template import Context, loader
 from django.contrib.auth.views import login, logout
 from django.contrib.auth.decorators import login_required
 from tasks.models import Task
-from .forms import PersonForm, PersonChangeForm
+from .forms import PersonForm, PersonChangeForm, ChoiceForm
 
 #modified by Faplo 30.04 for chat purposes
 def index(request):
@@ -41,6 +42,12 @@ def recruit(request):
     return render(request, 'user_views/recruit.html', {'form': form})
 
 def edit(request):
-    subordinates = request.user.subordinates.all()
-    form = PersonChangeForm
-    return render(request, 'user_views/edit.html', locals())
+    if request.method == 'POST':
+        return HttpResponse('{}'.format(request.POST.get('choice_field')))
+    else:
+        subordinates = request.user.subordinates.all()
+        choice_list = []
+        for item in subordinates:
+            choice_list.append(('{}'.format(item),'{}'.format(item)))
+        form = ChoiceForm(choice_list)
+        return render(request, 'user_views/edit.html', locals())

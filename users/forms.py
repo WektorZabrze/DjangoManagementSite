@@ -9,6 +9,12 @@ class PersonForm(forms.ModelForm):
 		model = Person
 		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'password')
 
+	def __init__(self, *args, **kwargs):
+		super(PersonForm,self).__init__(*args, **kwargs)
+		self.fields['username'].help_text = None
+
+
+
 	def clean (self):
 		cleaned_data = super(PersonForm, self).clean()
 		password = self.cleaned_data.get("password")
@@ -30,3 +36,13 @@ class PersonChangeForm(forms.ModelForm):
 	class Meta:
 		model = Person
 		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'subordinates')
+
+class ChoiceForm(forms.ModelForm):
+	def __init__(self, _choices):
+		super(ChoiceForm, self).__init__()
+		self.fields['Subordinates'] = forms.ChoiceField(choices=_choices)
+
+	class Meta:
+		model = Person
+		fields = ('username',)
+		exclude = ('username',)
