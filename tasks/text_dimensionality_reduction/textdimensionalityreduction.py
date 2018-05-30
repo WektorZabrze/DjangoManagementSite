@@ -1,10 +1,8 @@
-import csv
 import string
 from gensim.models import Doc2Vec
 from gensim.models.deprecated.doc2vec import LabeledSentence
 import pandas as pd
 from sklearn.manifold import TSNE
-from matplotlib import pyplot as plt
 import numpy as np
 
 from ..models import Task
@@ -24,7 +22,6 @@ def cleanseWords(separatedWords):
         word = word.lower()
         word = word.translate(str.maketrans('', '', string.punctuation))
         separatedWords[i] = word
-    #return separatedWords
 
 def gatherSentences(gatheredWords):
         tasksList = Task.objects.values_list("task_name")
@@ -49,34 +46,24 @@ def createSentenceVectors(gatheredWords, model):
         for word in sentence[0]:
             if word in vocab:
                 sentenceVector = np.add(sentenceVector, model[word])
+                countWords += 1
         if countWords != 0:
             sentenceVector = np.divide(sentenceVector, countWords)
         sentenceVectors.append(sentenceVector)
     return sentenceVectors
 
 def sentencesTo2D():
-    wordsListInSentence = []
-
-    #for testing purposes(it is used to load only few first row data)
-
     gatheredWords = []
     gatherSentences(gatheredWords)
-
 
     #load Doc2Vec model
     model = Doc2Vec.load("tasks/text_dimensionality_reduction/doc2vecmodel")
 
-#https://stackoverflow.com/questions/43776572/visualise-word2vec-generated-from-gensim
-    #vocab = list(model.wv.vocab)
-    #X = model[vocab]#it may be used if want to visualise word vectors not sentences
-
     sentenceVectors = createSentenceVectors(gatheredWords, model)
-
     print("end of counting vectors")
 
     #prepare TSNE
     tsne = TSNE(n_components=2)
-    #X_tsne = tsne.fit_transform(X)
     X_tsne = tsne.fit_transform(sentenceVectors)
 
     #join sentences so they will be as label for points
@@ -84,9 +71,7 @@ def sentencesTo2D():
     for sentence in gatheredWords:
         sentencesAdHoc.append(" ".join(sentence[0]))
 
-
     df = pd.DataFrame(X_tsne, index=sentencesAdHoc, columns=['x', 'y'])
-    #print(df)
     chartValuesDictionary = {
         "x": df['x'].tolist(),
         "y": df['y'].tolist(),
