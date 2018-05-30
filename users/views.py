@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import login, logout
 from django.shortcuts import render, redirect
 from django import forms
 from django.http import HttpResponse
@@ -8,25 +10,38 @@ from django.contrib.auth.views import login, logout
 from django.contrib.auth.decorators import login_required
 from tasks.models import Task
 from .forms import PersonForm, PersonChangeForm, ChoiceForm
+from chat.models import ChatRoom
+from .forms import PersonForm, PersonChangeForm
+from .utils import calculate_productivity_index
 
-#modified by Faplo 30.04 for chat purposes
+# modified by Faplo 30.04 for chat purposes
 def index(request):
     return render(request, 'user_views/uniformed_view.html', locals())
+
 
 @login_required
 def chat(request):
     chat_rooms = ChatRoom.objects.order_by("room_name")
     return render(request, 'chat/chat.html', locals())
 
+
 @login_required
 def logout_user(request):
-	return logout(request)
+    return logout(request)
+
 
 def login_user(request):
-	if not request.user.is_authenticated:
-		return login(request)
-	else:
-		return redirect('/')
+    if not request.user.is_authenticated:
+        return login(request)
+    else:
+        return redirect('/')
+
+
+@login_required
+def productivity_index(request):
+    p_index = request.user.productivity_index = calculate_productivity_index(request.user.personal_id)
+    return render(request, 'user_views/productivity_index.html', locals())
+
 
 @login_required
 def recruit(request):
@@ -40,6 +55,7 @@ def recruit(request):
     else:
         form = PersonForm()
     return render(request, 'user_views/recruit.html', {'form': form})
+
 
 def edit(request):
     if request.method == 'POST':

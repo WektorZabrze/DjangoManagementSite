@@ -13,7 +13,7 @@ from .forms import TaskForm
 from .load_sentences_to_model import loading
 from .models import Task
 from .text_dimensionality_reduction import textdimensionalityreduction
-from .utils import calculate_performance_index
+from .utils import calculate_productivity_index
 
 
 @login_required
@@ -90,7 +90,7 @@ def end_task(request, pk):
     if request.method == "POST":
         task = get_object_or_404(Task, pk=pk)
         task.end_date = datetime.datetime.now()
-        task.productivity_index = calculate_performance_index(task)
+        task.productivity_index = calculate_productivity_index(task)
         task.save()
         return render(request, 'tasks/basic_view.html', locals())
     else:

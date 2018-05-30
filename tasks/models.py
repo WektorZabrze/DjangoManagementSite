@@ -27,7 +27,7 @@ class Task(models.Model):
     end_date = models.DateTimeField(
         blank=True, null=True)
 
-    productivity_index = models.FloatField(null=True)
+    productivity_index = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return self.task_name

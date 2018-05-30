@@ -1,7 +1,7 @@
 import datetime
 
 
-def calculate_performance_index(task):
+def calculate_productivity_index(task):
     if task.priority == 'LOW':
         ratio = 0.6
     elif task.priority == 'HIG':
