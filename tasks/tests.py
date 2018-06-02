@@ -1,17 +1,18 @@
 from django.test import TestCase
 from django.test import Client
-from django.utils import timezone 
 from django.test.client import RequestFactory
+from django.utils import timezone
+from django.forms.fields import DateTimeField
 from django.contrib.auth.models import AnonymousUser
-from .models import Task
 from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
-from .views import task_add
+from .models import Task
+from .views import task_add, basic_view
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
-from django.forms.fields import DateTimeField
+
 
 from .text_dimensionality_reduction import textdimensionalityreduction as tdr
 
@@ -20,10 +21,29 @@ class TaskViewsTestCase(TestCase):
 	def setUpTestData(cls):
 		cls.date = timezone.now()
 		cls.person = Person.objects.create_user(username = 'temp', password = 'temp', position = 'BOS')
+		cls.person2 = Person.objects.create_user(username = 'temp2', password = 'temp2', position = 'WOR')
+		cls.person3 = Person.objects.create_user(username = 'temp3', password = 'temp3', position = 'WOR')
+		cls.person.subordinates.add(cls.person2)
 		cls.task1 = Task.objects.create(priority = 'LOW',assigned_employee = cls.person,  task_name = 'dummy task', 
 			task_description = 'dummy_task', created_date = TaskViewsTestCase.date, 
 			deadline_date = TaskViewsTestCase.date) 
+		cls.task2 = Task.objects.create(priority = 'LOW',assigned_employee = cls.person2,  task_name = 'dummy task2', 
+			task_description = 'dummy_task2', created_date = TaskViewsTestCase.date, 
+			deadline_date = TaskViewsTestCase.date) 
 		cls.factory = RequestFactory()
+
+	def test_basic_view(self):
+		# Test response 
+		request = TaskViewsTestCase.factory.get('/2/')
+		request.user = TaskViewsTestCase.person
+		response = basic_view(request, 2)
+		self.assertEquals(response.status_code, 200)
+		# Test redirect - request user not associated with task given by pk (primary key)
+		request = TaskViewsTestCase.factory.get('/2/')
+		request.user = TaskViewsTestCase.person3
+		response = basic_view(request, 2)
+		self.assertEquals(response.status_code, 302)
+
 
 	def test_tasks_list(self):
 		url = '/tasks/'
@@ -50,12 +70,9 @@ class TaskViewsTestCase(TestCase):
 		self.assertEquals(response.status_code, 200)
 		self.assertTemplateUsed(response, 'tasks/task_form.html')
 		c.logout()
-		# Test using Request Factory
-		request = TaskViewsTestCase.factory.post(url) # POST
-		request.user = AnonymousUser()
-		response = task_add(request)
+		client = Client()
+		response = client.post(url)
 		self.assertEqual(response.status_code, 302)
-
 
 	def test_get_chart(self):
 		url = '/tasks/chart/'
@@ -64,11 +81,32 @@ class TaskViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'tasks/chart/chart.html')
 
 	def test_user_tasks(self):
-		url = '/tasks'
-		response = self.client.get(url)
-		self.assertEquals(response.status_code, 200)
+		url = '/tasks/user_tasks/'
 		# Test situation when user is not logged in
-		self.assertTemplateUsed(response, 'user_views/uniformed_view.html')
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+		# Test situation when user is logged in
+		client = Client()
+		client.login(username = 'temp', password = 'temp')
+		response = client.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/user_tasks.html')
+
+
+	# TODO : Finish
+	def test_task_edit(self):
+		url = '/tasks/edit/1/'
+		# Test if unauthorized user
+		response = self.client.get(url)
+		self.assertEquals(response.status_code, 302)
+		# Test if autorized - if using GET method
+		# client = Client()
+		# client.login(username = 'temp', password = 'temp')
+		# response = client.post(url)
+		# self.assertEqual(response.status_code, 200)
+		# self.assertTemplateUsed(response, 'tasks/task_edit.html')
+
+		
 
 
 class TextReductionTestCase(TestCase):
@@ -127,11 +165,26 @@ class TaskUtilsTestCase(TestCase):
 		cls.task2 =  Task.objects.create(priority = 'LOW',assigned_employee = cls.person,  task_name = 'dummy task', 
 			task_description = 'dummy_task', created_date = TaskUtilsTestCase.date, 
 			deadline_date = TaskUtilsTestCase.date)
+		cls.task3 = Task.objects.create(priority = 'HIG',assigned_employee = cls.person,  task_name = 'dummy task', 
+			task_description = 'dummy_task', created_date = TaskUtilsTestCase.date, 
+			deadline_date = TaskUtilsTestCase.deadline_date)
+		cls.task4 = Task.objects.create(priority = 'CRI',assigned_employee = cls.person,  task_name = 'dummy task', 
+			task_description = 'dummy_task', created_date = TaskUtilsTestCase.date, 
+			deadline_date = TaskUtilsTestCase.deadline_date)
+		cls.task5 = Task.objects.create(priority = 'MED',assigned_employee = cls.person,  task_name = 'dummy task', 
+			task_description = 'dummy_task', created_date = TaskUtilsTestCase.date, 
+			deadline_date = TaskUtilsTestCase.deadline_date)
 
 	def test_calculate_productivity_index(self):
 		TaskUtilsTestCase.task1.end_date = TaskUtilsTestCase.date
 		TaskUtilsTestCase.task2.end_date = TaskUtilsTestCase.date
+		TaskUtilsTestCase.task3.end_date = TaskUtilsTestCase.date
+		TaskUtilsTestCase.task4.end_date = TaskUtilsTestCase.date
+		TaskUtilsTestCase.task5.end_date = TaskUtilsTestCase.date
 		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task1), float)
+		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task3), float)
+		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task4), float)
+		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task5), float)
 		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task2), int)
 		self.assertEquals(calculate_productivity_index(TaskUtilsTestCase.task2), 0)
 		

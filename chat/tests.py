@@ -148,19 +148,3 @@ class ChatUtilsTestCase(TestCase):
 		self.assertIsInstance(get_room_or_error(ChatUtilsTestCase.test_chat_room.id, ChatUtilsTestCase.user_boss), ChatRoom)
 		self.assertEqual(get_room_or_error(ChatUtilsTestCase.test_chat_room.id, ChatUtilsTestCase.user_boss), ChatUtilsTestCase.test_chat_room)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
