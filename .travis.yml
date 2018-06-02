@@ -6,8 +6,10 @@ python:
 install:
   - pip3 install -r requirements.txt
   - pip install coveralls
+  - pip3 install redis
 
 script:
+  - service redis-server start
   - python3 manage.py makemigrations
   - python3 manage.py migrate
   - python3 manage.py test
