@@ -13,6 +13,8 @@ from .forms import PersonForm, PersonChangeForm, ChoiceForm
 from chat.models import ChatRoom
 from .forms import PersonForm, PersonChangeForm
 from .utils import calculate_productivity_index
+from queue import Queue as Queue
+
 
 # modified by Faplo 30.04 for chat purposes
 def index(request):
@@ -67,3 +69,19 @@ def edit(request):
             choice_list.append(('{}'.format(item),'{}'.format(item)))
         form = ChoiceForm(choice_list)
         return render(request, 'user_views/edit.html', locals())
+
+
+
+@login_required
+def plot_graph(request):
+    root = Person.objects.get(position="BOS")
+    persons_queue = Queue()
+    persons_queue.put(root)
+    string = "digraph {\n"
+    while not persons_queue.empty():
+        actual = persons_queue.get()
+        for i in actual.subordinates.all():
+            string += "{} -> {};\n".format(str(actual), str(i))
+            persons_queue.put(i)
+    string += "}"
+    return HttpResponse(string)
