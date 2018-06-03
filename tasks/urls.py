@@ -4,6 +4,10 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.tasks_list, name='tasks_list'),
+    url(r'chart/menu/$', views.chart_menu, name='chart_menu'),
+    url(r'choose/$', views.choose_task, name="choose_task"),
+    url(r'choose_edit/$', views.choose_task_edit, name = "choose_task_edit"),
+    url(r'menu/$', views.task_menu, name = 'task_menu'),
     url(r'add/$', views.task_add, name='task-add'),
     url(r'search/$', views.search_task, name='task-search'),
     url (r'^user_tasks/', views.user_tasks),

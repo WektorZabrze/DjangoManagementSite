@@ -98,3 +98,7 @@ table{
   border-radius: 5px;
   padding: 20px;
 }
+
+table.iksde{
+  text-align:center;
+}

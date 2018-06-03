@@ -33,9 +33,13 @@
     </nav>
 
 <div style="width:100%; height: 100px"></div>
-
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save" />
-</form>
+<div class="container">
+  <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%">
+    <form class="inputfield" action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save" />
+    </form>
+    <a href="/tasks/menu/"><button class="btn btn-info">Get back</button></a>
+  </div>
+</div>

@@ -40,47 +40,23 @@
 	<div class="container">
 		<div class="d-flex align-items-center justify-content-center" style="height: 100%">
 			{% if not request.user.is_authenticated %} 
-				<div class="d-flex align-items-center justify-content-center" style = "height: 100%">
-					<a href='/login/'>
-						<button type="button" class="btn btn-info effects">
-							<i class="icon-logout"></i><span>Login</span>
-						</button>
-					</a>
-					<a href='/admin/'>
-						<button type="button" class="btn btn-info effects">
-							<i class="icon-logout"></i><span>Admin</span>
-						</button>
-					</a>
-				</div>
+				You are not allowed here!
 			{% elif request.user.position %}
 			<div class="d-flex align-items-center justify-content-center flex-wrap">
-				{% if request.user.position == 'BOS' or request.user.position == 'MAN' %}
-					<a href='/recruit/'>
+				{% if request.user.position == 'BOS' or request.user.position == 'MAN'%}
+					<a href= '/tasks/chart/'>
 						<button type="button" class="btn btn-info effects">
-							<i class="icon-user-plus"></i><span>Recruit</span>
+							<i class="icon-doc"></i><span>Show</span>
 						</button>
 					</a>
-					<a href='/edit/'>
+					<a href= '/tasks/chart/remove_result/'>
 						<button type="button" class="btn btn-info effects">
-							<i class="icon-edit"></i><span>Edit Subordinate</span>
+							<i class="icon-doc"></i><span>Clear</span>
 						</button>
 					</a>
+				{% else %}
+					You are not allowed here!
 				{% endif %}
-					<a href= '/tasks/menu/'>
-						<button type="button" class="btn btn-info effects">
-							<i class="icon-doc"></i><span>Task menu</span>
-						</button>
-					</a>
-					<a href="/chat/" target="_blank">
-						<button type="button" class="btn btn-info effects">
-							<i class="icon-mail-alt"></i><span>Chat</span>
-						</button>
-					</a>
-					<a href="/logout/">
-						<button type="button" class="btn btn-info effects">
-							<i class="icon-logout"></i><span>Logout</span>
-						</button>
-					</a>
 			</div>
 			{% endif %}
 		</div>

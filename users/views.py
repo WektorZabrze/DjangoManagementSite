@@ -60,29 +60,13 @@ def recruit(request):
 
 @login_required
 def edit2(request):
-	if request.session['to_edit'] == None:
-		return redirect('/')
 	to_edit = Person.objects.get(personal_id = request.session['to_edit'])
 	choice_dict = subordinates_dictionary(request)
-	form = ChangeForm(to_edit = to_edit, choice_dict = request.user.subordinates.all())
+	form = ChangeForm(request.POST or None, instance = to_edit, choice_dict = request.user.subordinates.all())
 	if request.method == 'POST':
-		if request.POST.get('username'):
-			to_edit.username = request.POST.get('username')
-		if request.POST.get('email'):
-			to_edit.first_name = request.POST.get('email')
-		if request.POST.get('first_name'):
-			to_edit.first_name = request.POST.get('first_name')
-		if request.POST.get('surname'):
-			to_edit.surname = request.POST.get('surname')
-		if request.POST.get('date_of_birth'):
-			to_edit.date_of_birth = request.POST.get('date_of_birth')
-		if request.POST.get('position'):
-			to_edit.position = request.POST.get('position')
-		if request.POST.get('subordinates'):
-			to_edit.subordinates.set(request.POST.getlist('subordinates'))
-		to_edit.save()
-		request.session['to_edit'] = None
-		return redirect('/')
+		if form.is_valid():
+			form.save()
+			return redirect('/')
 	else:
 		return render(request, 'user_views/edit.html', locals())
 

@@ -47,22 +47,24 @@ class ChoiceForm(forms.ModelForm):
 
 class ChangeForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
-		super(ChangeForm, self).__init__()
+		choice_dict = kwargs.pop('choice_dict')
+		super(ChangeForm, self).__init__(*args, **kwargs)
 		self.fields['username'].help_text = None
-		self.fields['username'].initial = kwargs['to_edit'].username
-		self.fields['email'].initial = kwargs['to_edit'].email
-		self.fields['first_name'].initial = kwargs['to_edit'].first_name
-		self.fields['surname'].initial = kwargs['to_edit'].surname
-		self.fields['date_of_birth'].initial = kwargs['to_edit'].date_of_birth
-		if kwargs['to_edit'].position == "BOS":
+		self.fields['username'].initial = kwargs['instance'].username
+		self.fields['email'].initial = kwargs['instance'].email
+		self.fields['first_name'].initial = kwargs['instance'].first_name
+		self.fields['surname'].initial = kwargs['instance'].surname
+		self.fields['date_of_birth'].initial = kwargs['instance'].date_of_birth
+		if kwargs['instance'].position == "BOS":
 			self.fields['position'].initial = 'BOS'
-		elif kwargs['to_edit'].position == "MAN":
+		elif kwargs['instance'].position == "MAN":
 			self.fields['position'].initial = 'MAN'
-		elif kwargs['to_edit'].position == "SUP":
+		elif kwargs['instance'].position == "SUP":
 			self.fields['position'].initial = 'SUP'
 		else:
 			self.fields['position'].initial = 'WOR'
-		self.fields['subordinates'] = forms.ModelMultipleChoiceField(queryset = kwargs['choice_dict'])
+		self.fields['subordinates'] = forms.ModelMultipleChoiceField(queryset = choice_dict, )
+		self.fields['subordinates'].required = False
 		
 
 	class Meta:

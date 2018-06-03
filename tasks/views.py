@@ -11,7 +11,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 
 from .filters import TaskFilter
-from .forms import TaskForm
+from .forms import TaskForm, ChooseTaskForm
 # TEMPORARY
 from .load_sentences_to_model import loading
 from .models import Task
@@ -35,6 +35,13 @@ def tasks_list(request):
     tasks_table = Task.objects.all();
     return render(request, 'tasks/tasks_list.html', locals())
 
+@login_required
+def task_menu(request):
+    return render(request, 'tasks/task_menu.html')
+
+@login_required
+def chart_menu(request):
+    return render(request, 'tasks/chart_menu.html')
 
 @login_required
 def search_task(request):
@@ -48,6 +55,30 @@ def loading_to_model_tmp(request):
     loading()
     return render(request, 'tasks/task_search.html')
 
+@login_required
+def choose_task(request):
+    return choose_task_with_redirect(request, '/tasks/{}/')
+
+@login_required
+def choose_task_edit(request):
+    return choose_task_with_redirect(request, '/tasks/edit/{}/')
+
+@login_required
+def choose_task_with_redirect(request, link):
+    if request.method == "POST":
+        return redirect(link.format(request.POST.get('Choose task')))
+    else:
+        tasks_list = []
+        for item in Task.objects.filter(assigned_employee = request.user):
+            tasks_list.append(("{}".format(item), "{}".format(item)))
+        for person in request.user.subordinates.all():
+            for item in Task.objects.filter(assigned_employee = person):
+                tasks_list.append(("{}".format(item.id), "{}".format(item)))
+        form = ChooseTaskForm(tasks_list)
+        if tasks_list:
+            return render(request, 'user_views/edit.html', locals())
+        else:
+            return render(request, 'tasks/task_menu.html')
 
 @login_required
 def task_add(request):
@@ -56,7 +87,7 @@ def task_add(request):
         if form.is_valid():
             task = form.save()
             task.save()
-            return redirect('/')
+            return redirect('/tasks/menu/')
     else:
         form = TaskForm(request=request)
     return render(request, 'tasks/task_form.html', {'form': form})
@@ -66,13 +97,12 @@ def task_add(request):
 def task_edit(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == "POST":
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, request=request, instance = task)
         if form.is_valid():
-            task = form.save()
-            task.save()
-            return redirect('tasks_list')
+            form.save()
+            return redirect('task_menu')
     else:
-        form = TaskForm(instance=task)
+        form = TaskForm(request=request, instance = task)
     return render(request, 'tasks/task_edit.html', {'form': form})
 
 
@@ -116,7 +146,7 @@ def remove_dimensionality_reduction_result(request):
     jsonFileName = "tasks/chartValueDictionary.json"
     if Path(jsonFileName).is_file():
         os.remove(jsonFileName)
-    return redirect("tasks_list")#temporary solution as there's no template for visualization
+    return redirect("chart_menu")#temporary solution as there's no template for visualization
 
 
 class ChartData(APIView):
