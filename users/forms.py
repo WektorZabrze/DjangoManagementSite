@@ -62,8 +62,7 @@ class ChangeForm(forms.ModelForm):
 			self.fields['position'].initial = 'SUP'
 		else:
 			self.fields['position'].initial = 'WOR'
-		self.fields['subordinates'].initial = kwargs['choice_dict']
-		
+		self.fields['subordinates'] = forms.ModelMultipleChoiceField(queryset = kwargs['choice_dict'])
 		
 
 	class Meta:

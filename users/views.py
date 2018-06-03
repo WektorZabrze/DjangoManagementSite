@@ -64,7 +64,7 @@ def edit2(request):
 		return redirect('/')
 	to_edit = Person.objects.get(personal_id = request.session['to_edit'])
 	choice_dict = subordinates_dictionary(request)
-	form = ChangeForm(to_edit = to_edit, choice_dict = choice_dict)
+	form = ChangeForm(to_edit = to_edit, choice_dict = request.user.subordinates.all())
 	if request.method == 'POST':
 		if request.POST.get('username'):
 			to_edit.username = request.POST.get('username')
@@ -79,7 +79,7 @@ def edit2(request):
 		if request.POST.get('position'):
 			to_edit.position = request.POST.get('position')
 		if request.POST.get('subordinates'):
-			to_edit.subordinates.set(request.POST.get('subordinates'))
+			to_edit.subordinates.set(request.POST.getlist('subordinates'))
 		to_edit.save()
 		request.session['to_edit'] = None
 		return redirect('/')
