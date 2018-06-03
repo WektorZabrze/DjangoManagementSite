@@ -94,18 +94,31 @@ class TaskViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'tasks/user_tasks.html')
 
 
-	# TODO : Finish
 	def test_task_edit(self):
 		url = '/tasks/edit/1/'
 		# Test if unauthorized user
 		response = self.client.get(url)
 		self.assertEquals(response.status_code, 302)
-		# Test if autorized - if using GET method
-		# client = Client()
-		# client.login(username = 'temp', password = 'temp')
-		# response = client.post(url)
-		# self.assertEqual(response.status_code, 200)
-		# self.assertTemplateUsed(response, 'tasks/task_edit.html')
+
+	def test_search_tasks(self):
+		url = '/tasks/search/'
+		# Test situation when user is not logged in
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+		# Test situation when user is logged in
+		client = Client()
+		client.login(username = 'temp', password = 'temp')
+		response = client.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/task_search.html')
+		client.logout()
+
+	def test_remove_dimensionality_reduction_result(self):
+		url = '/tasks/chart/remove_result/'
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+
+
 
 		
 
