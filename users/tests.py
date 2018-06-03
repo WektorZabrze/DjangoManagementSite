@@ -189,8 +189,18 @@ class UserViewsTestCase(TestCase):
 		request.user = UserViewsTestCase.user_boss
 		response = recruit(request)
 		self.assertEqual(response.status_code, 200)
+		# Test when unauthorized user
 		request = self.factory.post('/users/recruit/')
 		request.user = AnonymousUser()
+		response = recruit(request)
+		self.assertEqual(response.status_code, 302)
+		# Test when form valid
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		request = self.factory.post('/recruit/', data)
+		request.user = UserViewsTestCase.user_boss
 		response = recruit(request)
 		self.assertEqual(response.status_code, 302)
 		
@@ -202,6 +212,21 @@ class UserViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'user_views/productivity_index.html')
 		self.assertEqual(response.status_code, 200)
 		c.logout()
+
+	def test_edit2(self):
+		url = '/edit2/'
+		# Test when form valid
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		request = self.factory.post('/edit2/', data)
+		request.user = UserViewsTestCase.user_boss
+		response = recruit(request)
+		self.assertEqual(response.status_code, 302)
+
+
+
 	
 
 class UserFormsTestCase(TestCase):

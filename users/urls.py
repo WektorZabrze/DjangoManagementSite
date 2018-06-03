@@ -8,6 +8,5 @@ urlpatterns = [
 	url(r'^recruit/', views.recruit),
 	url(r'^edit2/', views.edit2, name="edit2"),
 	url(r'^edit/', views.edit),
-	url(r'^chat/', views.chat),
 	url(r'', views.index),
 ]
