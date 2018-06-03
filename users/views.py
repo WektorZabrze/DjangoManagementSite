@@ -13,7 +13,6 @@ from .forms import PersonForm, PersonChangeForm, ChoiceForm
 from chat.models import ChatRoom
 from .forms import PersonForm, PersonChangeForm, ChangeForm
 from .utils import calculate_productivity_index
-from queue import Queue as Queue
 
 
 # modified by Faplo 30.04 for chat purposes
@@ -61,7 +60,6 @@ def recruit(request):
 @login_required
 def edit2(request):
 	to_edit = Person.objects.get(personal_id = request.session['to_edit'])
-	choice_dict = subordinates_dictionary(request)
 	form = ChangeForm(request.POST or None, instance = to_edit, choice_dict = request.user.subordinates.all())
 	if request.method == 'POST':
 		if form.is_valid():
@@ -78,28 +76,14 @@ def edit(request):
     	request.session['to_edit'] = personal_id
     	return redirect('edit2')
     else:
-        choice_dict = subordinates_dictionary(request)
+        choice_dict = subordinates_list(request)
         form = ChoiceForm(choice_dict)
         return render(request, 'user_views/edit.html', locals())
 
 @login_required
-def subordinates_dictionary(request):
+def subordinates_list(request):
 	subordinates = request.user.subordinates.all()
-	choice_dict = []
+	choice_list = []
 	for item in subordinates:
-		choice_dict.append(('{}'.format(item.personal_id),'{}'.format(item)))
-	return choice_dict
-
-@login_required
-def plot_graph(request):
-    root = Person.objects.get(position="BOS")
-    persons_queue = Queue()
-    persons_queue.put(root)
-    string = "digraph {\n"
-    while not persons_queue.empty():
-        actual = persons_queue.get()
-        for i in actual.subordinates.all():
-            string += "{} -> {};\n".format(str(actual), str(i))
-            persons_queue.put(i)
-    string += "}"
-    return HttpResponse(string)
+		choice_list.append(('{}'.format(item.personal_id),'{}'.format(item)))
+	return choice_list

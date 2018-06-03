@@ -6,6 +6,8 @@ from django.contrib.auth.models import AnonymousUser
 from tasks.models import Task
 from .views import index
 from .views import recruit
+from .views import subordinates_list
+from .views import edit
 from .models import Person
 from .forms import PersonForm
 from .forms import PersonChangeForm
@@ -22,7 +24,22 @@ class UserViewsTestCase(TestCase):
 		cls.user_supervisor = Person.objects.create_user(username = 'temp_supervisor', password = 'temp_supervisor', position = "SUP")
 		cls.factory = RequestFactory()
 
-	# Test views - each page
+	
+	def test_subordinates_list(self):
+		client = Client()
+		client.login(username = 'temp_boss', password = 'temp_boss')
+		request = UserViewsTestCase.factory.get('/users/edit/')
+		request.user = UserViewsTestCase.user_boss
+		# Test when user has no subordinates - returns empty list
+		self.assertIsInstance(subordinates_list(request), list)
+		self.assertEqual(subordinates_list(request), [])
+		# Test when added subordinates
+		UserViewsTestCase.user_boss.subordinates.add(UserViewsTestCase.user_worker)
+		request.user = UserViewsTestCase.user_boss
+		self.assertIsInstance(subordinates_list(request), list)
+		self.assertEqual(subordinates_list(request), [(str(UserViewsTestCase.user_worker.personal_id), UserViewsTestCase.user_worker.first_name) ])
+		client.logout()
+
 
 
 	def test_index_page(self):
@@ -173,7 +190,6 @@ class UserViewsTestCase(TestCase):
 		response = c.get(url)
 		self.assertTemplateUsed(response, 'user_views/edit.html')
 		self.assertEqual(response.status_code, 200)
-		c.logout()
 
 	def test_recruit_view(self):
 		url = '/recruit/'

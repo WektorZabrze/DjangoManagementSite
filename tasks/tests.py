@@ -3,12 +3,13 @@ from django.test import Client
 from django.test.client import RequestFactory
 from django.utils import timezone
 from django.forms.fields import DateTimeField
+from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
 from .models import Task
-from .views import task_add, basic_view
+from .views import task_add, basic_view, ChartData
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
@@ -94,20 +95,38 @@ class TaskViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'tasks/user_tasks.html')
 
 
-	# TODO : Finish
 	def test_task_edit(self):
 		url = '/tasks/edit/1/'
 		# Test if unauthorized user
 		response = self.client.get(url)
 		self.assertEquals(response.status_code, 302)
-		# Test if autorized - if using GET method
-		# client = Client()
-		# client.login(username = 'temp', password = 'temp')
-		# response = client.post(url)
-		# self.assertEqual(response.status_code, 200)
-		# self.assertTemplateUsed(response, 'tasks/task_edit.html')
 
-		
+	def test_search_tasks(self):
+		url = '/tasks/search/'
+		# Test situation when user is not logged in
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+		# Test situation when user is logged in
+		client = Client()
+		client.login(username = 'temp', password = 'temp')
+		response = client.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/task_search.html')
+		client.logout()
+
+	def test_remove_dimensionality_reduction_result(self):
+		url = '/tasks/chart/remove_result/'
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+
+
+	def test_ChartData(self):
+		data = ChartData()
+		self.assertEqual(data.authentication_classes, [])
+		self.assertEqual(data.permission_classes, [])
+		url = '/tasks/api/chart/data/'
+		response = self.client.get(url)
+		self.assertIsInstance(response, JsonResponse)
 
 
 class TextReductionTestCase(TestCase):
@@ -213,5 +232,3 @@ class TaskUtilsTestCase(TestCase):
 		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task2), int)
 		self.assertEquals(calculate_productivity_index(TaskUtilsTestCase.task2), 0)
 		
-
-
