@@ -125,12 +125,12 @@
                             {% if task.end_date == None %}
                                 <form action="{% url 'end_task' task.pk %}" method="post">
                                     {% csrf_token %}
-                                    <input class="btn btn-info" type="submit" value="end" name="mybtn">
+                                    <input class="btn btn-info" type="submit" value="End" name="mybtn">
                                 </form>
                             {% else %}
                                 <form action="{% url 'revive_task' task.pk %}" method="post">
                                     {% csrf_token %}
-                                    <input class="btn btn-info" type="submit" value="revive" name="mybtn">
+                                    <input class="btn btn-info" type="submit" value="Revive" name="mybtn">
                                 </form>
                             {% endif %}
                             <a href="/tasks/menu/"><button class="btn btn-info">Get back</button></a>

@@ -69,8 +69,6 @@ def choose_task_with_redirect(request, link):
         return redirect(link.format(request.POST.get('Choose task')))
     else:
         tasks_list = []
-        for item in Task.objects.filter(assigned_employee = request.user):
-            tasks_list.append(("{}".format(item), "{}".format(item)))
         for person in request.user.subordinates.all():
             for item in Task.objects.filter(assigned_employee = person):
                 tasks_list.append(("{}".format(item.id), "{}".format(item)))

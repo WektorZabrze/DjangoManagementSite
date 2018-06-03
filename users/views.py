@@ -65,6 +65,8 @@ def edit2(request):
 		if form.is_valid():
 			form.save()
 			return redirect('/')
+		else:
+			return redirect('edit')
 	else:
 		return render(request, 'user_views/edit.html', locals())
 
