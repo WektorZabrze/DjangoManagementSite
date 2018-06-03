@@ -194,8 +194,8 @@ class ChartData(APIView):
             single_task_data = {
                 "label": tasks_descriptions[i],
                 "data": chart_point_settings,
-                "backgroundColor": "rgba(255,221,50,0.2)",
-                "borderColor": "rgba(255,221,50,1)",
+                "backgroundColor": "rgba(255,120,50,0.6)",
+                "borderColor": "rgba(255,120,50,1)",
             }
             all_tasks_chart_data.append(single_task_data)
 

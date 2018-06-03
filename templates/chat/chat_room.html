@@ -18,11 +18,15 @@
     <link rel="stylesheet" href="{% static 'chat_style.css' %}">
     <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
+    {% include "../bootstrap/bootstrap_template.html" %}
+    {% load staticfiles %}
+    <link rel='stylesheet' href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontello.css' %}" type="text/css" />
 
 	<title>Room: {{ room.room_name }}</title>
 </head>
     <body>
-    <div class="container">
+    <div class="container" style="font-size: 14px;">
         <div class="row form-group">
             <div class="col-xs-12 col-md-offset-2 col-md-8 col-lg-8 col-lg-offset-2">
                 <div class="panel panel-primary">
