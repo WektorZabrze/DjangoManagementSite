@@ -7,7 +7,7 @@ from tasks.models import Task
 from .views import index
 from .views import recruit
 from .views import subordinates_list
-from .views import edit, logout_user
+from .views import edit, logout_user, edit2
 from .models import Person
 from .forms import PersonForm
 from .forms import PersonChangeForm
@@ -214,17 +214,41 @@ class UserViewsTestCase(TestCase):
 		c.logout()
 
 	def test_edit2(self):
+		# Test when POST 
 		url = '/edit2/'
-		# Test when form valid
-		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
-		 'first_name' : 'temp', 'surname' : 'temp',
-		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
-		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
-		request = self.factory.post('/edit2/', data)
-		request.user = UserViewsTestCase.user_boss
-		response = recruit(request)
+		response = self.client.post(url)
+		# Not logged in
 		self.assertEqual(response.status_code, 302)
-
+		c = Client()
+		c.login(username = 'temp_boss', password = 'temp_boss')
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		'first_name' : 'temp', 'surname' : 'temp',
+		'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		, 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		session = c.session
+		session['to_edit'] = 1
+		session.save()
+		response = c.post(url, data)
+		# Logged in
+		self.assertEqual(response.status_code, 302)
+		# Test when GET
+		session = c.session
+		session['to_edit'] = 1
+		session.save()
+		response = c.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'user_views/edit.html')
+		# Test when form is not valid 
+		# data = {'email' : 'temp@temp.pl',
+		# 'first_name' : 'temp', 'surname' : 'temp',
+		# 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		# , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		# session = c.session
+		# session['to_edit'] = 1
+		# session.save()
+		# response = c.post(url, data)
+		# self.assertEqual(response.status_code, 302)
+		# self.assertRedirects(response, 'edit')
 
 
 	
