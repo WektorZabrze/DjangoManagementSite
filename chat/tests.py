@@ -4,6 +4,7 @@ from django.test import RequestFactory
 from channels import Group
 from .apps import ChatConfig
 from .views import*
+from .forms import ChatForm
 from users.models import Person
 from .models import ChatRoom
 from .exceptions import ClientError
@@ -32,12 +33,6 @@ class ChatViewsTestCase(TestCase):
 		# Test if not loged in
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, 302)
-		# POST
-		factory = RequestFactory()
-		request = factory.post('/chat/')
-		request.user = ChatViewsTestCase.user_boss
-		response = chat_list(request)
-		self.assertEqual(response.status_code, 200)
 
 
 	def test_chat_add(self):
@@ -52,6 +47,7 @@ class ChatViewsTestCase(TestCase):
 		# Test if not loged in
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, 302)
+
 
 	def test_chat_view(self):
 		url = '/chat/1/'

@@ -12,6 +12,7 @@ from .views import task_add, basic_view
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
+import numpy as np
 
 
 from .text_dimensionality_reduction import textdimensionalityreduction as tdr
@@ -110,10 +111,34 @@ class TaskViewsTestCase(TestCase):
 
 
 class TextReductionTestCase(TestCase):
+	@classmethod
+	def setUpTestData(cls):
+		cls.date = timezone.now()
+		cls.person = Person.objects.create_user(username = 'temp', password = 'temp', position = 'BOS')
+		cls.person2 = Person.objects.create_user(username = 'temp2', password = 'temp2', position = 'WOR')
+		cls.task1 = Task.objects.create(priority = 'LOW',assigned_employee = cls.person,  task_name = 'dummy task', 
+			task_description = 'dummy_task', created_date = TaskViewsTestCase.date, 
+			deadline_date = TaskViewsTestCase.date) 
+		cls.task2 = Task.objects.create(priority = 'LOW',assigned_employee = cls.person2,  task_name = 'dummy task2', 
+			task_description = 'dummy_task2', created_date = TaskViewsTestCase.date, 
+			deadline_date = TaskViewsTestCase.date) 
 
 	def test_cleanseWords(self):
 		test = ["aaa", "bbb"]
 		self.assertEquals(tdr.cleanseWords(test), None)
+
+	def test_sentencesTo2D(self):
+		self.assertIsInstance(tdr.sentencesTo2D(), dict)
+
+	def test_gatherSentences(self):
+		gathered_words = []
+		self.assertEquals(tdr.gatherSentences(gathered_words), None)
+
+	def test_createSentenceVectors(self):
+		gathered_words = []
+		tdr.gatherSentences(gathered_words)
+		model = Doc2Vec.load("tasks/text_dimensionality_reduction/doc2vecmodel")
+		self.assertIsInstance(tdr.createSentenceVectors(gathered_words, model), list)
 
 	
 
