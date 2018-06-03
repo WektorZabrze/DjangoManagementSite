@@ -3,12 +3,13 @@ from django.test import Client
 from django.test.client import RequestFactory
 from django.utils import timezone
 from django.forms.fields import DateTimeField
+from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
 from .models import Task
-from .views import task_add, basic_view
+from .views import task_add, basic_view, ChartData
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
@@ -119,8 +120,13 @@ class TaskViewsTestCase(TestCase):
 		self.assertEqual(response.status_code, 302)
 
 
-
-		
+	def test_ChartData(self):
+		data = ChartData()
+		self.assertEqual(data.authentication_classes, [])
+		self.assertEqual(data.permission_classes, [])
+		url = '/tasks/api/chart/data/'
+		response = self.client.get(url)
+		self.assertIsInstance(response, JsonResponse)
 
 
 class TextReductionTestCase(TestCase):
@@ -226,5 +232,3 @@ class TaskUtilsTestCase(TestCase):
 		self.assertIsInstance(calculate_productivity_index(TaskUtilsTestCase.task2), int)
 		self.assertEquals(calculate_productivity_index(TaskUtilsTestCase.task2), 0)
 		
-
-
