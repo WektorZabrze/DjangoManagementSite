@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'api/chart/data/$', views.ChartData.as_view(), name='chart-data'),
     url(r'chart/$', views.get_chart, name='chart-view'),
     url(r'chart/load/$',views.loading_to_model_tmp),
+    url(r'chart/remove_result/$',views.remove_dimensionality_reduction_result, name='remove_dimensionality_reduction'),
     url(r'end/(?P<pk>\d+)/$', views.end_task, name='end_task'),
     url(r'revive/(?P<pk>\d+)/$', views.revive_task, name='revive_task'),
     url(r'^(?P<pk>\d+)/$', views.basic_view, name='basic_view'),

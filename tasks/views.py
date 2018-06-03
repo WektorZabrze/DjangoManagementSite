@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
@@ -29,14 +30,12 @@ def basic_view(request, pk):
         return redirect('tasks_list')
 
 
-# Faplo - currently working 14.04
 @login_required
 def tasks_list(request):
     tasks_table = Task.objects.all();
     return render(request, 'tasks/tasks_list.html', locals())
 
 
-# Faplo - currently working 14.04
 @login_required
 def search_task(request):
     tasks_table = Task.objects.all()
@@ -85,6 +84,9 @@ def user_tasks(request):
 
 
 def get_chart(request):
+    #if there's too little task in the database
+    if(len(Task.objects.values("created_date")) < 2):
+        return redirect('/')
     return render(request, 'tasks/chart/chart.html')
 
 
@@ -108,6 +110,13 @@ def revive_task(request, pk):
         return render(request, 'tasks/basic_view.html', locals())
     else:
         return redirect('tasks_list')
+
+
+def remove_dimensionality_reduction_result(request):
+    jsonFileName = "tasks/chartValueDictionary.json"
+    if Path(jsonFileName).is_file():
+        os.remove(jsonFileName)
+    return redirect("tasks_list")#temporary solution as there's no template for visualization
 
 
 class ChartData(APIView):
