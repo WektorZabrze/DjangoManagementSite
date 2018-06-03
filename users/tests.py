@@ -7,7 +7,7 @@ from tasks.models import Task
 from .views import index
 from .views import recruit
 from .views import subordinates_list
-from .views import edit
+from .views import edit, logout_user
 from .models import Person
 from .forms import PersonForm
 from .forms import PersonChangeForm
@@ -68,14 +68,10 @@ class UserViewsTestCase(TestCase):
 
 		# Check if template containt 'Recruit' option
 		self.assertContains(response, 'Recruit')
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Edit subordinate' option
 		self.assertContains(response, 'Edit Subordinate')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -94,14 +90,10 @@ class UserViewsTestCase(TestCase):
 
 		# Check if template containt 'Recruit' option
 		self.assertContains(response, 'Recruit')
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Edit subordinate' option
 		self.assertContains(response, 'Edit Subordinate')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -118,12 +110,8 @@ class UserViewsTestCase(TestCase):
 		c.login(username = 'temp_supervisor', password = 'temp_supervisor')
 		response = c.get(url)
 
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -146,15 +134,12 @@ class UserViewsTestCase(TestCase):
 		
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
 		# Check if template does not contain higher lever options
 		self.assertNotContains(response, 'Edit Subordinate')
 		self.assertNotContains(response, 'Recruit')
-		self.assertNotContains(response, 'Assign Task')
 
 		# Logout from manager account
 		c.logout()
