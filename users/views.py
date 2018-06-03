@@ -59,7 +59,7 @@ def edit2(request):
 			form.save()
 			return redirect('/')
 		else:
-			return redirect('edit')
+			return redirect('/edit/')
 	else:
 		return render(request, 'user_views/edit.html', locals())
 
