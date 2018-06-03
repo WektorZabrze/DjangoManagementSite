@@ -9,7 +9,7 @@ from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
 from .models import Task
-from .views import task_add, basic_view, ChartData, revive_task, task_edit
+from .views import task_add, basic_view, ChartData, revive_task, task_edit, end_task
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
@@ -167,7 +167,7 @@ class TaskViewsTestCase(TestCase):
 		self.assertEqual(response.status_code, 302)
 
 		request = self.factory.post(url.format(1))
-		response = revive_task(request, pk=1)
+		response = end_task(request, pk=1)
 		self.assertEqual(response.status_code, 200)
 
 
