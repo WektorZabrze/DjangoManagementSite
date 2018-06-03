@@ -7,7 +7,7 @@ from tasks.models import Task
 from .views import index
 from .views import recruit
 from .views import subordinates_list
-from .views import edit
+from .views import edit, logout_user, edit2
 from .models import Person
 from .forms import PersonForm
 from .forms import PersonChangeForm
@@ -68,14 +68,10 @@ class UserViewsTestCase(TestCase):
 
 		# Check if template containt 'Recruit' option
 		self.assertContains(response, 'Recruit')
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Edit subordinate' option
 		self.assertContains(response, 'Edit Subordinate')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -94,14 +90,10 @@ class UserViewsTestCase(TestCase):
 
 		# Check if template containt 'Recruit' option
 		self.assertContains(response, 'Recruit')
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Edit subordinate' option
 		self.assertContains(response, 'Edit Subordinate')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -118,12 +110,8 @@ class UserViewsTestCase(TestCase):
 		c.login(username = 'temp_supervisor', password = 'temp_supervisor')
 		response = c.get(url)
 
-		# Check if template contains 'Assing Task' option
-		self.assertContains(response, 'Assign Task')
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
@@ -146,15 +134,12 @@ class UserViewsTestCase(TestCase):
 		
 		# Check if template contains 'Chat' option
 		self.assertContains(response, 'Chat')
-		# Check if template contains 'Check tasks' option
-		self.assertContains(response, 'Check tasks')
 		# Check if template contains 'Logout' option
 		self.assertContains(response, 'Logout')
 
 		# Check if template does not contain higher lever options
 		self.assertNotContains(response, 'Edit Subordinate')
 		self.assertNotContains(response, 'Recruit')
-		self.assertNotContains(response, 'Assign Task')
 
 		# Logout from manager account
 		c.logout()
@@ -204,8 +189,18 @@ class UserViewsTestCase(TestCase):
 		request.user = UserViewsTestCase.user_boss
 		response = recruit(request)
 		self.assertEqual(response.status_code, 200)
+		# Test when unauthorized user
 		request = self.factory.post('/users/recruit/')
 		request.user = AnonymousUser()
+		response = recruit(request)
+		self.assertEqual(response.status_code, 302)
+		# Test when form valid
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		 'first_name' : 'temp', 'surname' : 'temp',
+		 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		 , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		request = self.factory.post('/recruit/', data)
+		request.user = UserViewsTestCase.user_boss
 		response = recruit(request)
 		self.assertEqual(response.status_code, 302)
 		
@@ -217,6 +212,45 @@ class UserViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'user_views/productivity_index.html')
 		self.assertEqual(response.status_code, 200)
 		c.logout()
+
+	def test_edit2(self):
+		# Test when POST 
+		url = '/edit2/'
+		response = self.client.post(url)
+		# Not logged in
+		self.assertEqual(response.status_code, 302)
+		c = Client()
+		c.login(username = 'temp_boss', password = 'temp_boss')
+		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
+		'first_name' : 'temp', 'surname' : 'temp',
+		'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		, 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		session = c.session
+		session['to_edit'] = 1
+		session.save()
+		response = c.post(url, data)
+		# Logged in
+		self.assertEqual(response.status_code, 302)
+		# Test when GET
+		session = c.session
+		session['to_edit'] = 1
+		session.save()
+		response = c.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'user_views/edit.html')
+		# Test when form is not valid 
+		# data = {'email' : 'temp@temp.pl',
+		# 'first_name' : 'temp', 'surname' : 'temp',
+		# 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		# , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		# session = c.session
+		# session['to_edit'] = 1
+		# session.save()
+		# response = c.post(url, data)
+		# self.assertEqual(response.status_code, 302)
+		# self.assertRedirects(response, 'edit')
+
+
 	
 
 class UserFormsTestCase(TestCase):

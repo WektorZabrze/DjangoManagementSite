@@ -15,15 +15,8 @@ from .forms import PersonForm, PersonChangeForm, ChangeForm
 from .utils import calculate_productivity_index
 
 
-# modified by Faplo 30.04 for chat purposes
 def index(request):
     return render(request, 'user_views/uniformed_view.html', locals())
-
-
-@login_required
-def chat(request):
-    chat_rooms = ChatRoom.objects.order_by("room_name")
-    return render(request, 'chat/chat.html', locals())
 
 
 @login_required
