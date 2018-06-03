@@ -161,12 +161,12 @@ class UserViewsTestCase(TestCase):
 
 
 	def test_logout(self):
-	 	url = '/logout/'
-	 	c = Client()
-	 	c.login(username = 'temp_worker', password = 'temp_worker')
-	 	response = self.client.get(url)
-	 	self.assertEqual(response.status_code, 302)
-	 	c.logout()
+		url = '/logout/'
+		c = Client()
+		c.login(username = 'temp_worker', password = 'temp_worker')
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, 302)
+		c.logout()
 
 	def test_edit_view(self):
 		url = '/edit/'
@@ -239,16 +239,16 @@ class UserViewsTestCase(TestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertTemplateUsed(response, 'user_views/edit.html')
 		# Test when form is not valid 
-		# data = {'email' : 'temp@temp.pl',
-		# 'first_name' : 'temp', 'surname' : 'temp',
-		# 'date_of_birth' : '1900-01-01', 'position' : 'BOS'
-		# , 'password' : 'aaaa', 'password_confirm': 'aaaa'}
-		# session = c.session
-		# session['to_edit'] = 1
-		# session.save()
-		# response = c.post(url, data)
-		# self.assertEqual(response.status_code, 302)
-		# self.assertRedirects(response, 'edit')
+		data = {'email' : 'temp@temp.pl',
+		'first_name' : 'temp', 'surname' : 'temp',
+		'date_of_birth' : '1900-01-01', 'position' : 'BOS'
+		, 'password' : 'aaaa', 'password_confirm': 'aaaa'}
+		session = c.session
+		session['to_edit'] = 1
+		session.save()
+		response = c.post(url, data)
+		self.assertEqual(response.status_code, 302)
+		self.assertRedirects(response, '/edit/')
 
 
 	
