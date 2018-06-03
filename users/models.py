@@ -28,3 +28,6 @@ class Person(AbstractUser):
         else:
             position = "Worker"
         return self.first_name + " " + self.surname + " (" + position + ")"
+
+    def __str__(self):
+        return self.first_name

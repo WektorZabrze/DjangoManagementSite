@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from tasks.models import Task
 from .forms import PersonForm, PersonChangeForm, ChoiceForm
 from chat.models import ChatRoom
-from .forms import PersonForm, PersonChangeForm
+from .forms import PersonForm, PersonChangeForm, ChangeForm
 from .utils import calculate_productivity_index
 
 # modified by Faplo 30.04 for chat purposes
@@ -56,14 +56,50 @@ def recruit(request):
         form = PersonForm()
     return render(request, 'user_views/recruit.html', {'form': form})
 
+@login_required
+def edit2(request):
+	if request.session['to_edit'] == None:
+		return redirect('/')
+	to_edit = Person.objects.get(personal_id = request.session['to_edit'])
+	choice_dict = subordinates_dictionary(request)
+	form = ChangeForm(to_edit = to_edit, choice_dict = choice_dict)
+	if request.method == 'POST':
+		if request.POST.get('username'):
+			to_edit.username = request.POST.get('username')
+		if request.POST.get('email'):
+			to_edit.first_name = request.POST.get('email')
+		if request.POST.get('first_name'):
+			to_edit.first_name = request.POST.get('first_name')
+		if request.POST.get('surname'):
+			to_edit.surname = request.POST.get('surname')
+		if request.POST.get('date_of_birth'):
+			to_edit.date_of_birth = request.POST.get('date_of_birth')
+		if request.POST.get('position'):
+			to_edit.position = request.POST.get('position')
+		if request.POST.get('subordinates'):
+			to_edit.subordinates.set(request.POST.get('subordinates'))
+		to_edit.save()
+		request.session['to_edit'] = None
+		return redirect('/')
+	else:
+		return render(request, 'user_views/edit.html', locals())
 
+@login_required
 def edit(request):
     if request.method == 'POST':
-        return HttpResponse('{}'.format(request.POST.get('choice_field')))
+    	to_edit = Person.objects.get(personal_id = request.POST.get('Subordinates'))
+    	personal_id = int(to_edit.personal_id)
+    	request.session['to_edit'] = personal_id
+    	return redirect('edit2')
     else:
-        subordinates = request.user.subordinates.all()
-        choice_list = []
-        for item in subordinates:
-            choice_list.append(('{}'.format(item),'{}'.format(item)))
-        form = ChoiceForm(choice_list)
+        choice_dict = subordinates_dictionary(request)
+        form = ChoiceForm(choice_dict)
         return render(request, 'user_views/edit.html', locals())
+
+
+def subordinates_dictionary(request):
+	subordinates = request.user.subordinates.all()
+	choice_dict = []
+	for item in subordinates:
+		choice_dict.append(('{}'.format(item.personal_id),'{}'.format(item)))
+	return choice_dict

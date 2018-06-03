@@ -13,8 +13,6 @@ class PersonForm(forms.ModelForm):
 		super(PersonForm,self).__init__(*args, **kwargs)
 		self.fields['username'].help_text = None
 
-
-
 	def clean (self):
 		cleaned_data = super(PersonForm, self).clean()
 		password = self.cleaned_data.get("password")
@@ -46,3 +44,28 @@ class ChoiceForm(forms.ModelForm):
 		model = Person
 		fields = ('username',)
 		exclude = ('username',)
+
+class ChangeForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super(ChangeForm, self).__init__()
+		self.fields['username'].help_text = None
+		self.fields['username'].initial = kwargs['to_edit'].username
+		self.fields['email'].initial = kwargs['to_edit'].email
+		self.fields['first_name'].initial = kwargs['to_edit'].first_name
+		self.fields['surname'].initial = kwargs['to_edit'].surname
+		self.fields['date_of_birth'].initial = kwargs['to_edit'].date_of_birth
+		if kwargs['to_edit'].position == "BOS":
+			self.fields['position'].initial = 'BOS'
+		elif kwargs['to_edit'].position == "MAN":
+			self.fields['position'].initial = 'MAN'
+		elif kwargs['to_edit'].position == "SUP":
+			self.fields['position'].initial = 'SUP'
+		else:
+			self.fields['position'].initial = 'WOR'
+		self.fields['subordinates'].initial = kwargs['choice_dict']
+		
+		
+
+	class Meta:
+		model = Person
+		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'subordinates')
