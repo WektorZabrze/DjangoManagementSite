@@ -1,4 +1,6 @@
 import datetime
+import json
+from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -113,8 +115,33 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request):
-        # example, temporary values
-        chartValuesDictionary = textdimensionalityreduction.sentencesTo2D()
+        jsonFileName = "tasks/chartValueDictionary.json"
+        taskValues = Task.objects.values("created_date")
+
+        newestTask = taskValues.order_by("-created_date")[0]
+        nmbOfTasks = len(taskValues)
+
+        recalculateFlag = False
+
+        if Path(jsonFileName).is_file():
+            with open(jsonFileName, "r") as file:
+                chartValuesDictionary = json.load(file)
+
+                if(str(newestTask["created_date"]) != chartValuesDictionary["newest_task_date"] or
+                    nmbOfTasks != chartValuesDictionary["tasks_nmb"]):
+                    recalculateFlag = True
+        else:
+            recalculateFlag = True
+
+        #it is being recalculated if latest task date differs or number of tasks differs
+        if recalculateFlag == True:
+            chartValuesDictionary = textdimensionalityreduction.sentencesTo2D()
+            chartValuesDictionary["newest_task_date"] = str(newestTask["created_date"])
+            chartValuesDictionary["tasks_nmb"] = nmbOfTasks
+            #save dictionary to file if tasks were modified
+            with open(jsonFileName, "w") as file:
+                json.dump(chartValuesDictionary,file)
+
         x_values = chartValuesDictionary["x"]
         y_values = chartValuesDictionary["y"]
         tasks_descriptions = chartValuesDictionary["labels"]

@@ -1,10 +1,16 @@
 from django.test import TestCase
 from django.test import Client
+from django.test.client import RequestFactory
+from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
+from tasks.models import Task
 from .views import index
+from .views import recruit
 from .models import Person
 from .forms import PersonForm
 from .forms import PersonChangeForm
 from .apps import UsersConfig
+from .utils import calculate_productivity_index
 
 class UserViewsTestCase(TestCase):
 	# Create some users for testing purposes
@@ -14,6 +20,7 @@ class UserViewsTestCase(TestCase):
 		cls.user_manager = Person.objects.create_user(username = 'temp_manager', password = 'temp_manager', position = "MAN")
 		cls.user_worker = Person.objects.create_user(username = 'temp_worker', password = 'temp_worker', position = "WOR")
 		cls.user_supervisor = Person.objects.create_user(username = 'temp_supervisor', password = 'temp_supervisor', position = "SUP")
+		cls.factory = RequestFactory()
 
 	# Test views - each page
 
@@ -135,7 +142,7 @@ class UserViewsTestCase(TestCase):
 		# Logout from manager account
 		c.logout()
 
-	def test_log_in(self):
+	def test_login(self):
 		c = Client()
 		# Check id existing user can log in correctly
 		is_logged_in = c.login(username = 'temp_worker', password = 'temp_worker')
@@ -151,7 +158,7 @@ class UserViewsTestCase(TestCase):
 		self.assertFalse(is_logged_in)
 
 
-	def test_log_out(self):
+	def test_logout(self):
 	 	url = '/logout/'
 	 	c = Client()
 	 	c.login(username = 'temp_worker', password = 'temp_worker')
@@ -176,6 +183,25 @@ class UserViewsTestCase(TestCase):
 		self.assertTemplateUsed(response, 'user_views/recruit.html')
 		self.assertEqual(response.status_code, 200)
 		c.logout()
+		# Test POST
+		request = self.factory.post('/users/recruit/')
+		request.user = UserViewsTestCase.user_boss
+		response = recruit(request)
+		self.assertEqual(response.status_code, 200)
+		request = self.factory.post('/users/recruit/')
+		request.user = AnonymousUser()
+		response = recruit(request)
+		self.assertEqual(response.status_code, 302)
+		
+	def test_productivity_index(self):
+		url = '/productivity_index/'
+		c = Client()
+		c.login(username = 'temp_boss', password = 'temp_boss')
+		response = c.get(url)
+		self.assertTemplateUsed(response, 'user_views/productivity_index.html')
+		self.assertEqual(response.status_code, 200)
+		c.logout()
+	
 
 class UserFormsTestCase(TestCase):
 	''' Test forms in users app'''
@@ -214,7 +240,6 @@ class UserFormsTestCase(TestCase):
 		form = PersonForm(data = data)
 		self.assertIsInstance(form.save(), Person)
 
-
 	def test_PersonChangeForm_valid(self):
 		data = {'username' : 'temp', 'email' : 'temp@temp.pl',
 		 'first_name' : 'temp', 'surname' : 'temp',
@@ -251,3 +276,15 @@ class AppsTestCase(TestCase):
 
 	def test_apps(self):
 		self.assertEqual(UsersConfig.name, 'users')
+
+class UtilsTestCase(TestCase):
+
+	@classmethod
+	def setUpTestData(cls):
+		cls.user_manager = Person.objects.create_user(username = 'temp_manager', password = 'temp_manager', position = "MAN")
+
+	def test_calculate_productivity_index(self):
+		''' Test if 0 if no tasks done and if user does not exist '''
+		self.assertIsInstance(calculate_productivity_index(UtilsTestCase.user_manager.personal_id), int)
+		self.assertEqual(calculate_productivity_index(UtilsTestCase.user_manager.personal_id), 0)
+		self.assertEqual(calculate_productivity_index(30), 0)
