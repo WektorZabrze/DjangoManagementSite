@@ -9,7 +9,7 @@ from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
 from .models import Task
-from .views import task_add, basic_view, ChartData, revive_task
+from .views import task_add, basic_view, ChartData, revive_task, task_edit
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
@@ -71,6 +71,15 @@ class TaskViewsTestCase(TestCase):
 		response = c.get(url)
 		self.assertEquals(response.status_code, 200)
 		self.assertTemplateUsed(response, 'tasks/task_form.html')
+		#Test if authorized and valid data
+		data = {'priority' : 'LOW', 'assigned_employee' : '1',
+		 'task_name' : 'temp', 'task_description' : 'temp',
+		 'created_date' : '1900-01-01', 'deadline_date': '1900-01-01'}
+		request = self.factory.post(url, data)
+		request.user = TaskViewsTestCase.person
+		response = task_add(request)
+		self.assertEqual(response.status_code, 200)
+		#Post and unauthorized
 		c.logout()
 		client = Client()
 		response = client.post(url)
@@ -100,6 +109,21 @@ class TaskViewsTestCase(TestCase):
 		# Test if unauthorized user
 		response = self.client.get(url)
 		self.assertEquals(response.status_code, 302)
+		# Test if authorized
+		client = Client()
+		client.login(username = 'temp', password = 'temp')
+		response = client.get(url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/task_edit.html')
+		# Test if authorized and valid post
+		data = {'priority' : 'LOW', 'assigned_employee' : '1',
+		 'task_name' : 'temp', 'task_description' : 'temp',
+		 'created_date' : '1900-01-01', 'deadline_date': '1900-01-01'}
+		request = self.factory.post(url, data)
+		request.user = TaskViewsTestCase.person
+		response = task_edit(request, pk=1)
+		self.assertEqual(response.status_code, 200)
+
 
 	def test_search_tasks(self):
 		url = '/tasks/search/'
@@ -130,6 +154,15 @@ class TaskViewsTestCase(TestCase):
 
 	def test_revive_task(self):
 		url = '/tasks/revive/{}/'
+		response = self.client.get(url.format(999))
+		self.assertEqual(response.status_code, 302)
+
+		request = self.factory.post(url.format(1))
+		response = revive_task(request, pk=1)
+		self.assertEqual(response.status_code, 200)
+
+	def test_end_task(self):
+		url = '/tasks/end/{}/'
 		response = self.client.get(url.format(999))
 		self.assertEqual(response.status_code, 302)
 
