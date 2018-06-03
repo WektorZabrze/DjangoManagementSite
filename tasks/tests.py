@@ -9,7 +9,7 @@ from gensim.models import Doc2Vec
 from users.models import Person
 from .apps import TasksConfig
 from .models import Task
-from .views import task_add, basic_view, ChartData
+from .views import task_add, basic_view, ChartData, revive_task
 from .forms import TaskForm
 from .utils import calculate_productivity_index
 import pytz
@@ -127,6 +127,15 @@ class TaskViewsTestCase(TestCase):
 		url = '/tasks/api/chart/data/'
 		response = self.client.get(url)
 		self.assertIsInstance(response, JsonResponse)
+
+	def test_revive_task(self):
+		url = '/tasks/revive/{}/'
+		response = self.client.get(url.format(999))
+		self.assertEqual(response.status_code, 302)
+
+		request = self.factory.post(url.format(1))
+		response = revive_task(request, pk=1)
+		self.assertEqual(response.status_code, 200)
 
 
 class TextReductionTestCase(TestCase):
