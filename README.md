@@ -24,9 +24,15 @@ To create initial user (admin) use `python manage.py createsuperuser` and fill t
 * [Pandas 0.22.0](https://pandas.pydata.org/)
 * [Scikit-learn 0.19.1](http://scikit-learn.org/)
 * [Matplotlib 2.2.2](https://matplotlib.org/)
+* [Channels 1.1.5](https://channels.readthedocs.io/en/1.x/)
+* [Asgi_redis 1.4.3](https://pypi.org/project/asgi_redis/)
+* [Service_identity 17.0.0](https://service-identity.readthedocs.io/en/stable/)
 
 ## Website 
-You can see out website [here](https://morning-bastion-68332.herokuapp.com/)
+![](https://imgur.com/u7hklQc)
+You can see out website [here](https://obscure-dawn-12282.herokuapp.com/)
+Login: sample_user
+Password: sample_user12345
 
 ## Contributors
 [Jarosław Cierpich](https://github.com/Loniowsky)
