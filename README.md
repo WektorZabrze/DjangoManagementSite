@@ -29,9 +29,12 @@ To create initial user (admin) use `python manage.py createsuperuser` and fill t
 * [Service_identity 17.0.0](https://service-identity.readthedocs.io/en/stable/)
 
 ## Website 
-![](https://imgur.com/u7hklQc)
+![](https://i.imgur.com/u7hklQc.png)
+
 You can see out website [here](https://obscure-dawn-12282.herokuapp.com/)
+
 Login: sample_user
+
 Password: sample_user12345
 
 ## Contributors
