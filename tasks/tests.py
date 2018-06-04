@@ -85,6 +85,30 @@ class TaskViewsTestCase(TestCase):
 		response = client.post(url)
 		self.assertEqual(response.status_code, 302)
 
+	def test_menu_task(self):
+		url ="/tasks/menu/"
+		#if not authorized
+		response = self.client.get(url)
+		self.assertEquals(response.status_code, 302)
+		#if authorized
+		c =  Client()
+		c.login(username = 'temp', password = 'temp')
+		response = c.get(url)
+		self.assertEquals(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/task_menu.html')
+
+	def test_chart_menu(self):
+		url ="/tasks/chart/menu/"
+		#if not authorized
+		response = self.client.get(url)
+		self.assertEquals(response.status_code, 302)
+		#if authorized
+		c =  Client()
+		c.login(username = 'temp', password = 'temp')
+		response = c.get(url)
+		self.assertEquals(response.status_code, 200)
+		self.assertTemplateUsed(response, 'tasks/chart_menu.html')
+
 	def test_get_chart(self):
 		url = '/tasks/chart/'
 		response = self.client.get(url)
