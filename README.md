@@ -32,7 +32,7 @@ To create initial user (admin) use `python manage.py createsuperuser` and fill t
 ## Website 
 ![](https://i.imgur.com/u7hklQc.png)
 
-You can see out website [![Website](https://img.shields.io/website-up-down-green-red/http/shields.io.svg?label=my-website)](https://obscure-dawn-12282.herokuapp.com/)
+You can see out website [![Website](https://img.shields.io/website-up-down-green-red/http/shields.io.svg?label=here)](https://obscure-dawn-12282.herokuapp.com/)
 
 Login: sample_user
 
