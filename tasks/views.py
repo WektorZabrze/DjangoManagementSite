@@ -61,14 +61,17 @@ def choose_task(request):
 
 @login_required
 def choose_task_edit(request):
-    return choose_task_with_redirect(request, '/tasks/edit/{}/')
+    return choose_task_with_redirect(request, '/tasks/edit/{}/', False)
 
 @login_required
-def choose_task_with_redirect(request, link):
+def choose_task_with_redirect(request, link, _self = True):
     if request.method == "POST":
         return redirect(link.format(request.POST.get('Choose task')))
     else:
         tasks_list = []
+        if _self:
+            for item in Task.objects.filter(assigned_employee = request.user):
+                tasks_list.append(("{}".format(item.id), "{}".format(item)))
         for person in request.user.subordinates.all():
             for item in Task.objects.filter(assigned_employee = person):
                 tasks_list.append(("{}".format(item.id), "{}".format(item)))
