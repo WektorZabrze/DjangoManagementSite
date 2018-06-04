@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/WektorZabrze/DjangoManagementSite/badge.svg?branch=master)](https://coveralls.io/github/WektorZabrze/DjangoManagementSite?branch=master)  [![Build Status](https://travis-ci.org/WektorZabrze/DjangoManagementSite.svg?branch=master)](https://travis-ci.org/WektorZabrze/DjangoManagementSite)
+[![GitHub license](https://img.shields.io/github/license/WektorZabrze/DjangoManagementSite.svg)](https://github.com/WektorZabrze/DjangoManagementSite/blob/master/LICENSE)
 
 
 ## Description
@@ -31,7 +32,7 @@ To create initial user (admin) use `python manage.py createsuperuser` and fill t
 ## Website 
 ![](https://i.imgur.com/u7hklQc.png)
 
-You can see out website [here](https://obscure-dawn-12282.herokuapp.com/)
+You can see out website [![Website](https://img.shields.io/website-up-down-green-red/http/shields.io.svg?label=my-website)](https://obscure-dawn-12282.herokuapp.com/)
 
 Login: sample_user
 
