@@ -3,7 +3,7 @@
 
 
 ## Description
-**Django management site** is a simple Django website for mangaing a company. It consists features such as: 
+**Django management site** is a simple Django website for managing a company. It consists features such as: 
 * recruitment system
 * hierarchy system
 * task giving system
