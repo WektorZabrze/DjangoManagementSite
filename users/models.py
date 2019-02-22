@@ -1,20 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import validate_comma_separated_integer_list
+
 
 class Person(AbstractUser):
-	first_name = models.CharField(max_length = 100, default = "")
-	surname = models.CharField(max_length = 100, default = "")
-	date_of_birth = models.DateField(default = "1900-01-01")
-	personal_id = models.AutoField(primary_key = True)
-	subordinate_ids = models.CharField(validators = [validate_comma_separated_integer_list], max_length = 200, default = "") 
-	is_admin = models.BooleanField(default = False)
-	position = models.CharField(max_length = 3, choices =(
-		('BOS', 'Boss'),
-		('MAN', 'Manager'),
-		('SUP', 'Supervisor'),
-		('WOR', 'Worker'),
-		), default = 'WOR',
-	)
+    first_name = models.CharField(max_length=100, default="")
+    surname = models.CharField(max_length=100, default="")
+    date_of_birth = models.DateField(default="1900-01-01")
+    personal_id = models.AutoField(primary_key=True)
+    subordinates = models.ManyToManyField("Person", blank=True)
+    is_admin = models.BooleanField(default=False)
+    position = models.CharField(max_length=3, choices=(
+        ('BOS', 'Boss'),
+        ('MAN', 'Manager'),
+        ('SUP', 'Supervisor'),
+        ('WOR', 'Worker'),
+    ), default='WOR',
+                                )
+    productivity_index = models.FloatField(default=0.0, null=True)
 
-# Create your models here.
+    def get_full_name(self):
+        if self.position == "BOS":
+            position = "Boss"
+        elif self.position == "MAN":
+            position = "Manager"
+        elif self.position == "SUP":
+            position = "Supervisor"
+        else:
+            position = "Worker"
+        return self.first_name + " " + self.surname + " (" + position + ")"
+
+    def __str__(self):
+        return self.first_name

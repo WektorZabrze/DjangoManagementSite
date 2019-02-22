@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'django_tables2',
+    'channels',
     'users',
     'tasks',
+    'chat',
+    'rest_framework',
+    'django_heroku',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +73,12 @@ TEMPLATES = [
         },
     },
 ]
+
+STATICFILES_FINDERS = (
+'django.contrib.staticfiles.finders.FileSystemFinder',
+'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
 
 WSGI_APPLICATION = 'DMS.wsgi.application'
 
@@ -102,6 +112,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#configuration of redis - it's responsible for chat
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Redis channel layer implementation asgi_redis
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+        },
+       "ROUTING": "DMS.routing.channel_routing", # We will create it in a moment
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -121,8 +146,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS=(
+    os.path.join(BASE_DIR, 'static'),
+    '/static/',
+)
 
 AUTH_USER_MODEL = 'users.Person'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap-responsive.html'
+
+# Only on Heroku deployment
+# Activate Django-Heroku.
+#import django_heroku
+#django_heroku.settings(locals())
+
+#import matplotlib
+#matplotlib.use('Agg')

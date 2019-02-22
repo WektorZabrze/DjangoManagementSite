@@ -1,0 +1,20 @@
+language: python
+
+python:
+  - "3.5.2"
+  
+install:
+  - pip3 install -r requirements.txt
+  - pip install coveralls
+
+services:
+  - redis-server
+
+script:
+  - python3 manage.py makemigrations
+  - python3 manage.py migrate
+  - python3 manage.py test
+  - coverage run --source=./ manage.py test
+  
+after_success:
+  - coveralls

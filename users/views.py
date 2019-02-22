@@ -1,55 +1,84 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import login, logout
 from django.shortcuts import render, redirect
+from django import forms
 from django.http import HttpResponse
 from users.models import Person
+from chat.models import ChatRoom
 from django.template import Context, loader
 from django.contrib.auth.views import login, logout
+from django.contrib.auth.decorators import login_required
+from tasks.models import Task
+from .forms import PersonForm, PersonChangeForm, ChoiceForm
+from chat.models import ChatRoom
+from .forms import PersonForm, PersonChangeForm, ChangeForm
+from .utils import calculate_productivity_index
 
-def display_users(request):
-	list_of_users = Person.objects.all()
-	printed = "<br>".join([str(i) for i in list_of_users])
-	html = "<html><body>List of users:<br> {}.</body></html>".format(printed)
-	return HttpResponse(html)
 
 def index(request):
-	if not request.user.is_authenticated:
-		return default_view()
-	elif request.user.position == 'BOS':
-		return boss_view()
-	elif request.user.position == 'MAN':
-		return manager_view()
-	elif request.user.position == 'SUP':
-		return supervisor_view()
-	elif request.user.position == 'WOR':
-		return worker_view()	
-	elif request.user.position:
-		return whatever()
-	else:
-		return default_view()
+    return render(request, 'user_views/uniformed_view.html', locals())
 
-def boss_view():
-	return HttpResponse(loader.get_template("user_views/boss_view.html").render())
 
-def manager_view():
-	return HttpResponse(loader.get_template("user_views/manager_view.html").render())
-
-def supervisor_view():
-	return HttpResponse(loader.get_template("user_views/supervisor_view.html").render())
-
-def worker_view():
-	return HttpResponse(loader.get_template("user_views/worker_view.html").render())
-
-def default_view():
-	return HttpResponse(loader.get_template("user_views/default_view.html").render())
-	
-
-def whatever():
-	return HttpResponse("<html><body> You are logged in!</html><body>")
-
+@login_required
 def logout_user(request):
-	return logout(request)
+    return logout(request)
+
 
 def login_user(request):
-	if not request.user.is_authenticated:
-		return login(request)
+    if not request.user.is_authenticated:
+        return login(request)
+    else:
+        return redirect('/')
+
+
+@login_required
+def productivity_index(request):
+    p_index = request.user.productivity_index = calculate_productivity_index(request.user.personal_id)
+    return render(request, 'user_views/productivity_index.html', locals())
+
+
+@login_required
+def recruit(request):
+    if request.method == "POST":
+        form = PersonForm(request.POST)
+        if form.is_valid():
+            person = form.save()
+            person.save()
+            request.user.subordinates.add(person)
+            return redirect('/')
+    else:
+        form = PersonForm()
+    return render(request, 'user_views/recruit.html', {'form': form})
+
+@login_required
+def edit2(request):
+	to_edit = Person.objects.get(personal_id = request.session['to_edit'])
+	form = ChangeForm(request.POST or None, instance = to_edit, choice_dict = request.user.subordinates.all())
+	if request.method == 'POST':
+		if form.is_valid():
+			form.save()
+			return redirect('/')
+		else:
+			return redirect('/edit/')
 	else:
-		return index(request)
+		return render(request, 'user_views/edit.html', locals())
+
+@login_required
+def edit(request):
+    if request.method == 'POST':
+    	to_edit = Person.objects.get(personal_id = request.POST.get('Subordinates'))
+    	personal_id = int(to_edit.personal_id)
+    	request.session['to_edit'] = personal_id
+    	return redirect('edit2')
+    else:
+        choice_dict = subordinates_list(request)
+        form = ChoiceForm(choice_dict)
+        return render(request, 'user_views/edit.html', locals())
+
+@login_required
+def subordinates_list(request):
+	subordinates = request.user.subordinates.all()
+	choice_list = []
+	for item in subordinates:
+		choice_list.append(('{}'.format(item.personal_id),'{}'.format(item)))
+	return choice_list

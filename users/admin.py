@@ -16,18 +16,18 @@ class PersonCreationForm(forms.ModelForm):
 
 	class Meta:
 		model = Person
-		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position')
+		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'subordinates', 'password_confirm', 'password')
 
-	def check_password_match (self):
+	def clean (self):
+		cleaned_data = super(PersonCreationForm, self).clean()
 		password = self.cleaned_data.get("password")
 		password_confirm = self.cleaned_data.get("password_confirm")
 
 		if password and password_confirm and password != password_confirm:
-			raise forms.ValidationError("Passwords dont't match")
-		return password_confirm
+			self.add_error('password_confirm', 'Password does not match.')
 
-	def save(self, commit = True):
-		user = super().save(commit = False)
+	def save(self, commit=True):
+		user = super(PersonCreationForm, self).save(commit = False)
 		user.set_password(self.cleaned_data["password"])
 		if commit:
 			user.save()
@@ -39,7 +39,7 @@ class PersonChangeForm(forms.ModelForm):
 
 	class Meta:
 		model = Person
-		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'is_admin')
+		fields = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'subordinates')
 
 	def clean_password(self):
 		return self.initial["password"]
@@ -48,18 +48,16 @@ class PersonAdmin(BaseUserAdmin):
 	form = PersonChangeForm
 	add_form = PersonCreationForm
 
-	list_display = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'is_admin')
-	list_filter = ("is_admin",)
+	list_display = ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position')
 	fieldsets = (
 		(None, {"fields" : ('email', 'password')}),
-		('Personal info', { 'fields': ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position',)}),
-		('Permitions', {'fields' : ('is_admin',)}),
+		('Personal info', { 'fields': ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position','subordinates')}),
 	)
 
 	add_fieldsets = (
 		(None, {
 			'classes' : ('wide',),
-			'fields' : ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'password', 'password_confirm')
+			'fields' : ('username', 'email', 'first_name', 'surname', 'date_of_birth', 'position', 'password', 'password_confirm', 'subordinates'),
 			}),
 	)
 
